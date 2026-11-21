@@ -2,8 +2,27 @@ import { FindConfig } from "../common"
 import { RestoreReturn, SoftDeleteReturn } from "../dal"
 import { IModuleService } from "../modules-sdk"
 import { Context } from "../shared-context"
-import { FilterableStoreProps, StoreDTO } from "./common"
-import { CreateStoreDTO, UpdateStoreDTO, UpsertStoreDTO } from "./mutations"
+import {
+  FilterableStorefrontColorProps,
+  FilterableStorefrontPageProps,
+  FilterableStorefrontSectionProps,
+  FilterableStoreProps,
+  StoreDTO,
+  StorefrontColorDTO,
+  StorefrontPageDTO,
+  StorefrontSectionDTO,
+} from "./common"
+import {
+  CreateStoreDTO,
+  CreateStorefrontColorDTO,
+  CreateStorefrontPageDTO,
+  CreateStorefrontSectionDTO,
+  UpdateStoreDTO,
+  UpdateStorefrontColorDTO,
+  UpdateStorefrontPageDTO,
+  UpdateStorefrontSectionDTO,
+  UpsertStoreDTO,
+} from "./mutations"
 
 /**
  * The main service interface for the Store Module.
@@ -288,4 +307,142 @@ export interface IStoreModuleService extends IModuleService {
     config?: RestoreReturn<TReturnableLinkableKeys>,
     sharedContext?: Context
   ): Promise<Record<string, string[]> | void>
+
+  // Storefront Pages
+  createStorefrontPages(
+    data: CreateStorefrontPageDTO[],
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO[]>
+  createStorefrontPages(
+    data: CreateStorefrontPageDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO>
+  updateStorefrontPages(
+    data: ({ id: string } & UpdateStorefrontPageDTO)[],
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO[]>
+  updateStorefrontPages(
+    data: { id: string } & UpdateStorefrontPageDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO>
+  deleteStorefrontPages(ids: string[], sharedContext?: Context): Promise<void>
+  deleteStorefrontPages(id: string, sharedContext?: Context): Promise<void>
+  softDeleteStorefrontPages<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  restoreStorefrontPages<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  retrieveStorefrontPage(
+    id: string,
+    config?: FindConfig<StorefrontPageDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO>
+  listStorefrontPages(
+    filters?: FilterableStorefrontPageProps,
+    config?: FindConfig<StorefrontPageDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontPageDTO[]>
+  listAndCountStorefrontPages(
+    filters?: FilterableStorefrontPageProps,
+    config?: FindConfig<StorefrontPageDTO>,
+    sharedContext?: Context
+  ): Promise<[StorefrontPageDTO[], number]>
+
+  // Storefront Sections
+  createStorefrontSections(
+    data: CreateStorefrontSectionDTO[],
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO[]>
+  createStorefrontSections(
+    data: CreateStorefrontSectionDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO>
+  updateStorefrontSections(
+    data: ({ id: string } & UpdateStorefrontSectionDTO)[],
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO[]>
+  updateStorefrontSections(
+    data: { id: string } & UpdateStorefrontSectionDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO>
+  deleteStorefrontSections(
+    ids: string[],
+    sharedContext?: Context
+  ): Promise<void>
+  deleteStorefrontSections(id: string, sharedContext?: Context): Promise<void>
+  softDeleteStorefrontSections<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  restoreStorefrontSections<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  retrieveStorefrontSection(
+    id: string,
+    config?: FindConfig<StorefrontSectionDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO>
+  listStorefrontSections(
+    filters?: FilterableStorefrontSectionProps,
+    config?: FindConfig<StorefrontSectionDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontSectionDTO[]>
+  listAndCountStorefrontSections(
+    filters?: FilterableStorefrontSectionProps,
+    config?: FindConfig<StorefrontSectionDTO>,
+    sharedContext?: Context
+  ): Promise<[StorefrontSectionDTO[], number]>
+
+  // Storefront Colors
+  createStorefrontColors(
+    data: CreateStorefrontColorDTO[],
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO[]>
+  createStorefrontColors(
+    data: CreateStorefrontColorDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO>
+  updateStorefrontColors(
+    data: ({ id: string } & UpdateStorefrontColorDTO)[],
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO[]>
+  updateStorefrontColors(
+    data: { id: string } & UpdateStorefrontColorDTO,
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO>
+  deleteStorefrontColors(ids: string[], sharedContext?: Context): Promise<void>
+  deleteStorefrontColors(id: string, sharedContext?: Context): Promise<void>
+  softDeleteStorefrontColors<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  restoreStorefrontColors<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+  retrieveStorefrontColor(
+    id: string,
+    config?: FindConfig<StorefrontColorDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO>
+  listStorefrontColors(
+    filters?: FilterableStorefrontColorProps,
+    config?: FindConfig<StorefrontColorDTO>,
+    sharedContext?: Context
+  ): Promise<StorefrontColorDTO[]>
+  listAndCountStorefrontColors(
+    filters?: FilterableStorefrontColorProps,
+    config?: FindConfig<StorefrontColorDTO>,
+    sharedContext?: Context
+  ): Promise<[StorefrontColorDTO[], number]>
 }

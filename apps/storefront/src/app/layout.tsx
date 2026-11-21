@@ -4,18 +4,24 @@ import { Footer } from "@/components/layout/footer"
 import { Header } from "@/components/layout/header"
 import { CartDrawer, CommerceNotice } from "@/components/commerce/cart"
 import { CommerceProvider } from "@/lib/commerce"
-import { getBrands, getCatalog } from "@/lib/medusa"
+import {
+  getBrands,
+  getCatalog,
+  getStorefrontColors,
+} from "@/lib/medusa"
 import "./globals.css"
 import "./commerce.css"
+import "./digistyle.css"
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
   title: {
-    default: "آینورا | پوشاک، چرم و سبک زندگی",
-    template: "%s | آینورا",
+    default: "فروشگاه اینترنتی مد و لباس دیجی‌استایل",
+    template: "%s | دیجی‌استایل",
   },
-  description: "آینورا، فروشگاه مد، پوشاک و چرم برای انتخاب‌های هر روز شما.",
+  description:
+    "خرید اینترنتی جدیدترین مدل‌های لباس زنانه، مردانه و بچگانه، کیف و کفش، ساعت، اکسسوری و لوازم آرایشی با ضمانت اصالت کالا در دیجی‌استایل.",
 }
 
 export default async function RootLayout({
@@ -23,11 +29,21 @@ export default async function RootLayout({
 }: {
   children: ReactNode
 }) {
-  const [products, brands] = await Promise.all([getCatalog(), getBrands()])
+  const [products, brands, colorMap] = await Promise.all([
+    getCatalog(),
+    getBrands(),
+    getStorefrontColors(),
+  ])
   return (
-    <html lang="fa" dir="rtl">
+    <html
+      lang="fa"
+      dir="rtl"
+      data-dds-style="sharp"
+      data-dds-theme="fashion"
+      data-dds-mode="light"
+    >
       <body>
-        <CommerceProvider catalog={products}>
+        <CommerceProvider catalog={products} colorMap={colorMap}>
           <Header products={products} brands={brands} />
           {children}
           <Footer />

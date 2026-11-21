@@ -5,6 +5,7 @@ import { TwoColumnPageSkeleton } from "../../../components/common/skeleton"
 import { LayoutComposer, detailPageDefaultEntries } from "../../../components/layout-composer"
 import { useProduct } from "../../../hooks/api/products"
 import { ProductAttributeSection } from "./components/product-attribute-section"
+import { ProductFashionSection } from "./components/product-fashion-section"
 import { ProductGeneralSection } from "./components/product-general-section"
 import { ProductMediaSection } from "./components/product-media-section"
 import { ProductOptionSection } from "./components/product-option-section"
@@ -101,6 +102,9 @@ export const ProductDetail = () => {
             </LayoutComposer.Entry>
             <LayoutComposer.Entry id="ProductAttributeSection">
               <ProductAttributeSection product={product} />
+            </LayoutComposer.Entry>
+            <LayoutComposer.Entry id="ProductFashionSection">
+              <ProductFashionSection product={product} />
             </LayoutComposer.Entry>
           </>
         ),

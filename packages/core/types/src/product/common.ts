@@ -1957,6 +1957,23 @@ export interface ProductFashionMetadata {
    * Return policy summary for the product.
    */
   return_policy?: string
+  /**
+   * Optional seller performance metrics shown on the product detail buy box.
+   */
+  seller_stats?: {
+    stars?: number
+    ship_on_time?: number
+    no_return?: number
+    registration_date?: string
+  }
+  /**
+   * Optional promotional ribbon badge label (e.g., "حراج استایل").
+   */
+  promo_badge?: string
+  /**
+   * Explicit recommended/related product IDs curated for this product.
+   */
+  recommended_product_ids?: string[]
 }
 
 /**

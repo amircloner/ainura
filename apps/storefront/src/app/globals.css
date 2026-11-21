@@ -1,24 +1,72 @@
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300..900&display=swap");
 @import "tailwindcss";
 
+@font-face {
+  font-display: swap;
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 300;
+  src: url("/fonts/iranyekan/iranyekanweblight.woff2") format("woff2");
+}
+@font-face {
+  font-display: swap;
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 400;
+  src: url("/fonts/iranyekan/iranyekanwebregular.woff2") format("woff2");
+}
+@font-face {
+  font-display: swap;
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 500;
+  src: url("/fonts/iranyekan/iranyekanwebmedium.woff") format("woff");
+}
+@font-face {
+  font-display: swap;
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 700;
+  src: url("/fonts/iranyekan/iranyekanwebbold.woff2") format("woff2");
+}
+@font-face {
+  font-display: swap;
+  font-family: "IRANYekan";
+  font-style: normal;
+  font-weight: 800;
+  src: url("/fonts/iranyekan/iranyekanwebextrabold.woff") format("woff");
+}
+
 @theme {
-  --font-sans: "Vazirmatn", system-ui, sans-serif;
+  --font-sans: "IRANYekan", system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  --store-ink: #111;
-  --store-bg: #fafafa;
-  --store-muted: #625e5d;
-  --store-line: #e6e0dc;
-  --store-surface: #f1eeeb;
-  --store-accent: #e6123d;
-  --store-header: 132px;
+  --store-ink: #0e0e0e;
+  --store-bg: #ffffff;
+  --store-muted: #848484;
+  --store-line: #e0e0e2;
+  --store-surface: #f1f2f4;
+  --store-accent: #940000;
+  --ds-primary: #0e0e0e;
+  --ds-secondary-500: #940000;
+  --ds-secondary-700: #800000;
+  --ds-neutral-0: #ffffff;
+  --ds-neutral-50: #f7f7f8;
+  --ds-neutral-100: #f1f2f4;
+  --ds-neutral-150: #e0e0e2;
+  --ds-neutral-200: #d3d5d9;
+  --ds-grey-300: #a1a3a8;
+  --ds-grey-400: #848484;
+  --ds-grey-700: #3f4064;
+  --ds-grey-900: #0e0e0e;
+  --store-header: 73px;
 }
 
 body {
   background: var(--store-bg);
   color: var(--store-ink);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 button:not(:disabled),
 summary {

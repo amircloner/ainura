@@ -3,13 +3,19 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useCommerce } from "@/lib/commerce"
-import { formatPrice, toPersian } from "@/lib/format"
+import { toPersian } from "@/lib/format"
 import type { CatalogProduct, ReviewStats } from "@/lib/medusa"
 import { Icon, Media, Modal, number } from "../layout/ui"
 import { colorHex, variantDiscount } from "./catalog"
 import { WishlistButton } from "./product-card"
 
-function Gallery({ product }: { product: CatalogProduct }) {
+function Gallery({
+  product,
+  badgeTitle,
+}: {
+  product: CatalogProduct
+  badgeTitle?: string
+}) {
   const [active, setActive] = useState(0)
   const [lightbox, setLightbox] = useState(false)
   const [shareMessage, setShareMessage] = useState("")
@@ -22,14 +28,14 @@ function Gallery({ product }: { product: CatalogProduct }) {
 
   async function share() {
     try {
-      if (navigator.share)
+      if (navigator.share) {
         await navigator.share({
           title: product.title,
           url: window.location.href,
         })
-      else {
+      } else {
         await navigator.clipboard.writeText(window.location.href.split("#")[0])
-        setShareMessage("پیوند کپی شد.")
+        setShareMessage("پیوند محصول کپی شد.")
       }
     } catch (error) {
       if (!(error instanceof Error && error.name === "AbortError"))
@@ -38,11 +44,28 @@ function Gallery({ product }: { product: CatalogProduct }) {
   }
 
   return (
-    <div className="store-gallery">
-      <div className="store-gallery-frame">
+    <div className="ds-pdp-gallery">
+      {images.length > 1 && (
+        <div className="ds-pdp-thumbs" aria-label="تصاویر محصول">
+          {images.map((src, index) => (
+            <button
+              key={src}
+              type="button"
+              className="ds-pdp-thumb"
+              aria-label={label(index)}
+              aria-pressed={index === active}
+              onClick={() => setActive(index)}
+            >
+              <img src={src} alt="" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="ds-pdp-main-frame">
         {images.length > 0 ? (
           <button
-            className="store-gallery-image"
+            className="ds-pdp-main-btn"
             type="button"
             aria-label="نمایش تصویر در اندازه بزرگ"
             onClick={() => setLightbox(true)}
@@ -60,46 +83,51 @@ function Gallery({ product }: { product: CatalogProduct }) {
               } as React.CSSProperties
             }
           >
-            <Media src={images[active]} alt={label(active)} eager />
-            <span className="store-gallery-expand">
-              <Icon name="expand" size={19} />
-            </span>
+            <img src={images[active]} alt={label(active)} />
           </button>
         ) : (
           <Media alt="" />
         )}
-        <div className="store-gallery-actions">
-          <WishlistButton product={product} />
+
+        {badgeTitle && (
+          <span className="ds-pdp-promo-ribbon">{badgeTitle}</span>
+        )}
+
+        <div className="ds-pdp-overlay-actions">
+          <WishlistButton product={product} className="ds-pdp-overlay-btn" />
           <button
-            className="store-icon"
+            className="ds-pdp-overlay-btn"
             type="button"
             aria-label="اشتراک‌گذاری"
             onClick={() => {
               void share()
             }}
           >
-            <Icon name="share" />
+            <Icon name="share" size={18} />
+          </button>
+          <button
+            className="ds-pdp-overlay-btn"
+            type="button"
+            aria-label="بزرگ‌نمایی تصویر"
+            onClick={() => setLightbox(true)}
+          >
+            <Icon name="expand" size={18} />
           </button>
         </div>
+
+        {images.length > 1 && (
+          <span className="ds-pdp-counter">
+            {number(active + 1)} / {number(images.length)}
+          </span>
+        )}
       </div>
-      <p role="status" className="store-share-status">
-        {shareMessage}
-      </p>
-      {images.length > 1 && (
-        <div className="store-gallery-thumbs" aria-label="تصاویر محصول">
-          {images.map((src, index) => (
-            <button
-              key={src}
-              type="button"
-              aria-label={label(index)}
-              aria-pressed={index === active}
-              onClick={() => setActive(index)}
-            >
-              <Media src={src} alt="" />
-            </button>
-          ))}
-        </div>
+
+      {shareMessage && (
+        <p role="status" className="store-share-status">
+          {shareMessage}
+        </p>
       )}
+
       {lightbox && (
         <Modal
           label="تصاویر محصول"
@@ -155,14 +183,16 @@ export function ProductDetail({
   product: CatalogProduct
   stats: ReviewStats
 }) {
-  const { addToCart } = useCommerce()
+  const { addToCart, colorMap } = useCommerce()
   const first =
     product.variants.find((variant) => variant.available) ?? product.variants[0]
   const [color, setColor] = useState(first?.color ?? "")
   const [size, setSize] = useState(first?.size ?? "")
   const [guide, setGuide] = useState(false)
   const [pending, setPending] = useState(false)
+  const [added, setAdded] = useState(false)
   const [message, setMessage] = useState("")
+
   const colors = [
     ...new Set(
       product.variants.map((variant) => variant.color).filter(Boolean)
@@ -174,8 +204,14 @@ export function ProductDetail({
   const options = product.variants.filter((variant) => variant.color === color)
   const selected = options.find((variant) => variant.size === size)
   const discount = selected ? variantDiscount(selected) : 0
+  const isIrr = product.currency?.toLowerCase() === "irr"
+  const toman = (amount: number) =>
+    number(Math.round(isIrr ? amount / 10 : amount))
+
   const {
     seller_name,
+    seller_stats,
+    promo_badge,
     warranty,
     lead_time_days,
     return_policy,
@@ -197,30 +233,35 @@ export function ProductDetail({
       )?.size ?? ""
     )
     setMessage("")
+    setAdded(false)
   }
 
   return (
-    <div className="store-pdp-layout">
-      <Gallery product={product} />
-      <div className="store-pdp-info">
-        <div className="store-pdp-labels">
+    <div className="ds-pdp-grid">
+      <Gallery
+        product={product}
+        badgeTitle={promo_badge || (discount > 0 ? "حراج استایل" : undefined)}
+      />
+
+      <div className="ds-pdp-info">
+        <div className="ds-pdp-brand-row">
           {product.brand && (
-            <Link href={`/brands/${encodeURIComponent(product.brand.handle)}`}>
-              {product.brand.name} <Icon name="left" size={13} />
+            <Link
+              className="ds-pdp-brand"
+              href={`/brands/${encodeURIComponent(product.brand.handle)}`}
+            >
+              {product.brand.name}
             </Link>
           )}
-          {warranty && (
-            <span>
-              <Icon name="shield" size={16} /> کالای اصل
+          {product_code && (
+            <span className="ds-pdp-code">
+              کد کالا: <bdi>{product_code}</bdi>
             </span>
           )}
         </div>
-        <h1>{product.title}</h1>
-        {product_code && (
-          <div className="store-product-code">
-            کد محصول <bdi>{product_code}</bdi>
-          </div>
-        )}
+
+        <h1 className="ds-pdp-title">{product.title}</h1>
+
         {stats.total_count > 0 && (
           <div className="store-pdp-rating">
             <a href="#reviews">
@@ -231,44 +272,60 @@ export function ProductDetail({
               <span>({number(stats.total_count)} دیدگاه)</span>
             </a>
             <span>
-              <Icon name="check" size={17} />{" "}
-              {number(Math.round(stats.recommendation_percentage))}٪ از خریداران
-              این کالا را پیشنهاد کرده‌اند
+              <Icon name="check" size={16} />{" "}
+              {number(Math.round(stats.recommendation_percentage))}٪ پیشنهاد
+              خریداران
             </span>
           </div>
         )}
+
+        <div className="ds-pdp-divider" />
+
         {colors.length > 0 && (
-          <fieldset className="store-variant">
-            <legend>
-              رنگ: <strong>{color}</strong>
+          <fieldset className="ds-pdp-fieldset">
+            <legend className="ds-pdp-legend">
+              <span>
+                رنگ: <strong>{color}</strong>
+              </span>
             </legend>
-            <div className="store-variant-colors">
+            <div className="ds-color-chips">
               {colors.map((option) => (
                 <button
                   key={option}
                   type="button"
-                  className="store-swatch"
-                  style={{ backgroundColor: colorHex(option) }}
-                  title={option}
-                  aria-label={option}
+                  className="ds-color-chip"
                   aria-pressed={color === option}
                   onClick={() => chooseColor(option)}
-                />
+                >
+                  <span
+                    className="ds-color-dot"
+                    style={{ backgroundColor: colorHex(option, colorMap) }}
+                  />
+                  <span>{option}</span>
+                </button>
               ))}
             </div>
           </fieldset>
         )}
+
         {(sizes.length > 0 || size_guide) && (
-          <fieldset className="store-variant">
-            <legend>
-              سایز
-              {size && (
-                <>
-                  : <strong>{toPersian(size)}</strong>
-                </>
+          <fieldset className="ds-pdp-fieldset">
+            <legend className="ds-pdp-legend">
+              <span>
+                سایز{size && <>: <strong>{toPersian(size)}</strong></>}
+              </span>
+              {size_guide && (
+                <button
+                  type="button"
+                  className="ds-size-guide-btn"
+                  onClick={() => setGuide(true)}
+                >
+                  <Icon name="ruler" size={15} />
+                  راهنمای سایز
+                </button>
               )}
             </legend>
-            <div className="store-size-options">
+            <div className="ds-size-chips">
               {sizes.map((option) => {
                 const available = options.some(
                   (variant) => variant.size === option && variant.available
@@ -277,72 +334,123 @@ export function ProductDetail({
                   <button
                     key={option}
                     type="button"
+                    className="ds-size-btn"
                     aria-label={`سایز ${toPersian(option)}${available ? "" : "، ناموجود"}`}
                     aria-pressed={size === option}
                     disabled={!available}
                     onClick={() => {
                       setSize(option)
                       setMessage("")
+                      setAdded(false)
                     }}
                   >
-                    {toPersian(option)}
+                    <span>{toPersian(option)}</span>
+                    {!available && (
+                      <svg
+                        className="ds-size-slash"
+                        aria-hidden="true"
+                        fill="none"
+                        stroke="#d3d5d9"
+                        strokeDasharray="3"
+                      >
+                        <rect
+                          x="0.5"
+                          y="0.5"
+                          width="calc(100% - 1px)"
+                          height="calc(100% - 1px)"
+                        />
+                        <line x1="0" y1="100%" x2="100%" y2="0" />
+                      </svg>
+                    )}
                   </button>
                 )
               })}
             </div>
-            {size_guide && (
-              <button
-                type="button"
-                className="store-size-guide"
-                onClick={() => setGuide(true)}
-              >
-                <Icon name="ruler" size={18} />
-                راهنمای سایز
-              </button>
-            )}
           </fieldset>
         )}
-        <div className="store-seller">
-          {seller_name && <h2>{seller_name}</h2>}
-          <ul>
+
+        <div className="ds-buy-box">
+          <div>
+            <div className="ds-seller-row">
+              <span className="ds-seller-name">
+                فروشنده: {seller_name || "دیجی‌استایل"}
+              </span>
+              {seller_stats?.registration_date && (
+                <span className="ds-pdp-code">
+                  سابقه: {seller_stats.registration_date}
+                </span>
+              )}
+            </div>
+            {seller_stats && (
+              <div className="ds-seller-stats" style={{ marginTop: 8 }}>
+                {seller_stats.stars != null && (
+                  <span>
+                    عملکرد:{" "}
+                    <strong>عالی ({number(seller_stats.stars)} از ۵)</strong>
+                  </span>
+                )}
+                {seller_stats.ship_on_time != null && (
+                  <span>
+                    تأمین به موقع:{" "}
+                    <strong>{number(seller_stats.ship_on_time)}٪</strong>
+                  </span>
+                )}
+                {seller_stats.no_return != null && (
+                  <span>
+                    بدون مرجوعی:{" "}
+                    <strong>{number(seller_stats.no_return)}٪</strong>
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          <ul className="ds-buy-promises">
             {warranty && (
               <li>
                 <Icon name="shield" size={17} />
-                {warranty}
+                <span>{warranty}</span>
               </li>
             )}
-            {lead_time_days != null && (
-              <li>
-                <Icon name="truck" size={18} />
-                {lead_time_days <= 1
-                  ? "ارسال سریع"
+            <li>
+              <Icon name="truck" size={17} />
+              <span>
+                {lead_time_days == null || lead_time_days <= 1
+                  ? "موجود در انبار دیجی‌استایل (ارسال سریع)"
                   : `آماده ارسال تا ${number(lead_time_days)} روز کاری`}
-              </li>
-            )}
+              </span>
+            </li>
             {return_policy && (
               <li>
-                <Icon name="check" size={18} />
-                {return_policy}
+                <Icon name="check" size={17} />
+                <span>{return_policy}</span>
               </li>
             )}
           </ul>
-          <div className="store-pdp-price">
+
+          <div className="ds-pdp-price-block">
             {selected && discount > 0 && (
-              <div>
-                <span className="store-sale-badge">٪{number(discount)}</span>
-                <del>
-                  {formatPrice(selected.originalPrice, product.currency)}
-                </del>
+              <div className="ds-card-old-row">
+                <span className="ds-card-old-price">
+                  {toman(selected.originalPrice)}
+                </span>
+                <span className="ds-discount-badge">٪{number(discount)}</span>
               </div>
             )}
-            <strong>
-              {selected?.available
-                ? formatPrice(selected.price, product.currency)
-                : "ناموجود"}
-            </strong>
+            {selected?.available ? (
+              <div className="ds-card-final-row">
+                <span className="ds-pdp-price-main">
+                  {toman(selected.price)}
+                </span>
+                <span className="ds-toman">تومان</span>
+              </div>
+            ) : (
+              <span className="ds-card-oos">ناموجود</span>
+            )}
           </div>
+
           <button
-            className="store-button"
+            className="ds-pdp-cta"
             type="button"
             disabled={!selected?.available || pending}
             onClick={async () => {
@@ -351,6 +459,7 @@ export function ProductDetail({
               setMessage("")
               try {
                 await addToCart(product, selected.id)
+                setAdded(true)
               } catch {
                 setMessage("افزودن به سبد خرید انجام نشد. دوباره تلاش کنید.")
               } finally {
@@ -362,12 +471,21 @@ export function ProductDetail({
             {pending
               ? "در حال افزودن…"
               : selected?.available
-                ? "افزودن به سبد خرید"
+                ? "اضافه به سبد خرید"
                 : "ترکیب انتخاب‌شده ناموجود است"}
           </button>
+
+          {added && (
+            <div className="ds-added-toast" role="status">
+              <span>کالا به سبد خرید اضافه شد!</span>
+              <Link href="/cart">برو به سبد خرید</Link>
+            </div>
+          )}
+
           {message && <p role="alert">{message}</p>}
         </div>
       </div>
+
       {guide && size_guide && (
         <Modal label="راهنمای سایز" onClose={() => setGuide(false)}>
           {size_guide.measurement_note && <p>{size_guide.measurement_note}</p>}

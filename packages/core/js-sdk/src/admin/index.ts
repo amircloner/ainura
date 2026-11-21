@@ -57,6 +57,7 @@ import { RbacRole } from "./rbac-role.js"
 import { RbacPolicy } from "./rbac-policy.js"
 import { Brand } from "./brand.js"
 import { Review } from "./review.js"
+import { StorefrontColor, StorefrontPage } from "./storefront-page.js"
 
 /**
  * The admin client provides access to admin-related resources.
@@ -300,6 +301,14 @@ export class Admin {
    * @tags product
    */
   public review: Review
+  /**
+   * @tags store
+   */
+  public storefrontPage: StorefrontPage
+  /**
+   * @tags store
+   */
+  public storefrontColor: StorefrontColor
 
   constructor(client: Client) {
     this.invite = new Invite(client)
@@ -360,5 +369,7 @@ export class Admin {
     this.rbacPolicy = new RbacPolicy(client)
     this.brand = new Brand(client)
     this.review = new Review(client)
+    this.storefrontPage = new StorefrontPage(client)
+    this.storefrontColor = new StorefrontColor(client)
   }
 }

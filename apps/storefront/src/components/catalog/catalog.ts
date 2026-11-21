@@ -78,46 +78,16 @@ export function variantDiscount(variant: CatalogProduct["variants"][number]) {
 const catalogPrice = (amount: number, currency?: string) =>
   currency?.toLowerCase() === "irr" ? amount / 10 : amount
 
-export function colorHex(color: string) {
+export function colorHex(color: string, colorMap?: Record<string, string>) {
   const normalized = normalizeText(color)
-  return /^(#[a-f\d]{3}|#[a-f\d]{6})$/i.test(normalized)
-    ? normalized
-    : ((
-        {
-          مشکی: "#1a191a",
-          سیاه: "#1a191a",
-          black: "#1a191a",
-          زرشکی: "#792840",
-          burgundy: "#792840",
-          عسلی: "#ad6d31",
-          tan: "#ad6d31",
-          "قهوه ای": "#805438",
-          قهوه‌ای: "#805438",
-          brown: "#805438",
-          سفید: "#fff",
-          white: "#fff",
-          کرم: "#e7d9bc",
-          بژ: "#c6ac91",
-          beige: "#c6ac91",
-          "سرمه ای": "#28364f",
-          navy: "#28364f",
-          آبی: "#5275a1",
-          blue: "#5275a1",
-          طوسی: "#88878a",
-          خاکستری: "#88878a",
-          gray: "#88878a",
-          grey: "#88878a",
-          صورتی: "#d89da6",
-          pink: "#d89da6",
-          سبز: "#647656",
-          green: "#647656",
-          زیتونی: "#6f704a",
-          قرمز: "#be333a",
-          red: "#be333a",
-          "نقره ای": "#bcc0c3",
-          طلایی: "#c4a04b",
-        } as Record<string, string>
-      )[normalized] ?? "#e6e1dc")
+  if (/^(#[a-f\d]{3}|#[a-f\d]{6})$/i.test(normalized)) return normalized
+  if (colorMap) {
+    if (colorMap[color]) return colorMap[color]
+    for (const [name, hex] of Object.entries(colorMap)) {
+      if (normalizeText(name) === normalized) return hex
+    }
+  }
+  return "#e6e1dc"
 }
 
 function amount(value: string | null) {

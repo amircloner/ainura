@@ -25,6 +25,7 @@ export const DEFAULT_LANDING_ROUTES: LandingRoute[] = [
   { to: "/products", permission: "product:read" },
   { to: "/brands", permission: "product_brand:read" },
   { to: "/reviews", permission: "product_review:read" },
+  { to: "/storefront-pages", permission: "storefront_page:read" },
   { to: "/inventory", permission: "inventory_item:read" },
   { to: "/customers", permission: "customer:read" },
   { to: "/promotions", permission: "promotion:read" },

@@ -254,6 +254,7 @@ export const CORE_POLICY_RESOURCES = [
   "workflow_execution",
   "store",
   "store_locale",
+  "storefront_page",
   "search_index",
   "search_index_sync",
   "index_engine",

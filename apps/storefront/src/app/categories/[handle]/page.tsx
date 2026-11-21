@@ -8,11 +8,20 @@ export default async function CategoryPage({
 }: {
   params: Promise<{ handle: string }>
 }) {
-  const [{ handle }, products] = await Promise.all([params, getCatalog()])
+  const [{ handle: rawHandle }, products] = await Promise.all([
+    params,
+    getCatalog(),
+  ])
+  const handle = decodeURIComponent(rawHandle)
   const category = categoriesFrom(products).find(
     (item) => item.handle === handle
   )
   if (!category) notFound()
+
+  const matched = products.filter((product) =>
+    categoryTrail(product.category).some((item) => item.handle === handle)
+  )
+
   const crumbs = [
     { label: "همه محصولات", href: "/products" },
     ...categoryTrail(category).map((item) => ({
@@ -23,13 +32,8 @@ export default async function CategoryPage({
           : `/categories/${encodeURIComponent(item.handle)}`,
     })),
   ]
+
   return (
-    <CatalogPage
-      title={category.name}
-      crumbs={crumbs}
-      products={products.filter((product) =>
-        categoryTrail(product.category).some((item) => item.handle === handle)
-      )}
-    />
+    <CatalogPage title={category.name} crumbs={crumbs} products={matched} />
   )
 }

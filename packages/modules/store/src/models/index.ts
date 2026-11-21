@@ -1,3 +1,6 @@
 export { default as Store } from "./store"
 export { default as StoreCurrency } from "./currency"
 export { default as StoreLocale } from "./locale"
+export { default as StorefrontPage } from "./storefront-page"
+export { default as StorefrontSection } from "./storefront-section"
+export { default as StorefrontColor } from "./storefront-color"

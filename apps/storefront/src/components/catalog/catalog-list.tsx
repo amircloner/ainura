@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation"
 import { useState } from "react"
+import { useCommerce } from "@/lib/commerce"
 import type { CatalogProduct } from "@/lib/medusa"
 import { Icon, Modal, number, price } from "../layout/ui"
 import {
@@ -80,6 +81,7 @@ function CategoryTree({
 }
 
 export function CatalogList({ products }: { products: CatalogProduct[] }) {
+  const { colorMap } = useCommerce()
   const params = useSearchParams()
   const filters = catalogQuery(params)
   const results = catalogResults(products, filters)
@@ -245,7 +247,7 @@ export function CatalogList({ products }: { products: CatalogProduct[] }) {
                 key={color}
                 type="button"
                 className="store-swatch"
-                style={{ backgroundColor: colorHex(color) }}
+                style={{ backgroundColor: colorHex(color, colorMap) }}
                 title={color}
                 aria-label={color}
                 aria-pressed={filters.colors.includes(color)}
@@ -416,6 +418,7 @@ export function CatalogList({ products }: { products: CatalogProduct[] }) {
                 key={product.id}
                 product={product}
                 variants={variants}
+                fluid
               />
             ))}
           </div>

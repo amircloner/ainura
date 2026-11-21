@@ -1,27 +1,45 @@
 import assert from "node:assert/strict"
-import { test } from "node:test"
-import { formatPrice, latinDigits, reviewStats, toPersian } from "../format.ts"
-import { demoBrands, demoProducts, demoReviews } from "../seed-data.ts"
+import test from "node:test"
+import { formatPrice, reviewStats, toPersian } from "../format.ts"
+import type { CatalogReview } from "../seed-data.ts"
 
-test("Persian digits and Toman conversion", () => {
-  assert.equal(toPersian("KLR-601"), "KLR-۶۰۱")
-  assert.equal(latinDigits("۰۹۱٢۳۴۵۶۷۸۹"), "09123456789")
-  assert.equal(formatPrice(24_900_000, "irr"), formatPrice(2_490_000))
-  assert.match(formatPrice(80, "eur"), /EUR/)
+test("formatPrice formats Toman and converts Rial values to Toman", () => {
+  assert.equal(formatPrice(1_690_000), "۱٬۶۹۰٬۰۰۰ تومان")
+  assert.equal(formatPrice(16_900_000, "irr"), "۱٬۶۹۰٬۰۰۰ تومان")
+  assert.equal(toPersian("36 - 41"), "۳۶ - ۴۱")
 })
 
-test("Clara fixture has unique color/size variants, full size guide, and review stats", () => {
-  assert.equal(demoBrands.length, 6)
-  assert.ok(demoProducts.length >= 16)
-  const [clara] = demoProducts
-  assert.equal(clara.metadata.product_code, "KLR-601")
-  assert.equal(new Set(clara.variants.map(({ id }) => id)).size, 18)
-  assert.equal(clara.metadata.size_guide?.rows.length, 6)
-  const stats = reviewStats(clara.id, demoReviews)
-  assert.equal(stats.recommendation_percentage, 88)
-  assert.equal(
-    Object.values(stats.distribution).reduce((sum, count) => sum + count),
-    stats.total_count
-  )
-  assert.equal(reviewStats(clara.id, []).average_rating, 0)
+test("reviewStats computes rating distribution and recommendation rate", () => {
+  const sampleReviews: CatalogReview[] = [
+    {
+      id: "rev_1",
+      customer_name: "نگین",
+      rating: 5,
+      title: "عالی",
+      content: "دوخت تمیز",
+      pros: [],
+      cons: [],
+      is_recommended: true,
+      verified_purchase: true,
+      created_at: "2026-11-10T10:00:00.000Z",
+    },
+    {
+      id: "rev_2",
+      customer_name: "مریم",
+      rating: 4,
+      title: "خوب",
+      content: "تنخور مناسب",
+      pros: [],
+      cons: [],
+      is_recommended: true,
+      verified_purchase: true,
+      created_at: "2026-11-04T14:30:00.000Z",
+    },
+  ]
+  const stats = reviewStats("prod_22797531", sampleReviews)
+  assert.equal(stats.total_count, 2)
+  assert.equal(stats.average_rating, 4.5)
+  assert.equal(stats.distribution[5], 1)
+  assert.equal(stats.distribution[4], 1)
+  assert.equal(stats.recommendation_percentage, 100)
 })

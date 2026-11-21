@@ -886,6 +886,44 @@ export function getRouteMap({
               ],
             },
             {
+              path: "/storefront-pages",
+              errorElement: <ErrorBoundary />,
+              element: (
+                <PermissionsRequirementsProvider>
+                  <RoutePermissionGuard />
+                </PermissionsRequirementsProvider>
+              ),
+              handle: {
+                breadcrumb: () => t("storefrontPages.domain"),
+                permissions: "storefront_page:read",
+              },
+              children: [
+                {
+                  path: "",
+                  lazy: () =>
+                    import(
+                      "../../routes/storefront-pages/storefront-page-list"
+                    ),
+                },
+                {
+                  path: "colors",
+                  lazy: () =>
+                    import("../../routes/storefront-pages/storefront-colors"),
+                  handle: {
+                    breadcrumb: () => t("storefrontPages.colors"),
+                  },
+                },
+                {
+                  path: ":id",
+                  lazy: () =>
+                    import(
+                      "../../routes/storefront-pages/storefront-page-detail"
+                    ),
+                  handle: { breadcrumb: () => t("general.details") },
+                },
+              ],
+            },
+            {
               path: "/reviews",
               errorElement: <ErrorBoundary />,
               element: (

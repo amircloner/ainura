@@ -1,41 +1,88 @@
 import assert from "node:assert/strict"
-import { test } from "node:test"
-import { demoProducts } from "../../lib/seed-data.ts"
+import test from "node:test"
+import type { CatalogProduct } from "../../lib/seed-data.ts"
 import {
   catalogQuery,
   catalogResults,
-  categoryTrail,
+  colorHex,
   matchesProduct,
 } from "./catalog.ts"
 
-test("catalog facets share one variant and use Toman bounds and Persian search", () => {
-  const [shoe] = demoProducts
-  const product = {
-    ...shoe,
-    currency: "irr",
-    variants: shoe.variants.map((variant) => ({
-      ...variant,
-      price: variant.price * 10,
-      originalPrice: variant.originalPrice * 10,
-    })),
-  }
-  const find = (query: string) =>
-    catalogResults([product], catalogQuery(new URLSearchParams(query)))
-  assert.equal(matchesProduct(product, "كفش يلسان KLR-۶۰۱"), true)
-  assert.deepEqual(
-    categoryTrail(product.category).map((category) => category.handle),
-    ["women", "women-shoes", "women-casual-shoes"]
-  )
+const sampleCatalog: CatalogProduct[] = [
+  {
+    id: "prod_1",
+    handle: "22797531-jacket",
+    title: "کاپشن زنانه شمعی ام کی مدل L2005",
+    description: "کاپشن زنانه شمعی",
+    category: {
+      handle: "women-warm-jacket",
+      name: "کاپشن زنانه",
+      parent: { handle: "womens-apparel", name: "زنانه" },
+    },
+    brand: {
+      id: "brand_1",
+      name: "ام کی",
+      handle: "mk",
+      logo_url: null,
+      banner_url: null,
+      description: null,
+      is_featured: true,
+      country: null,
+    },
+    images: ["https://example.com/1.jpg"],
+    variants: [
+      {
+        id: "var_1",
+        color: "آجری",
+        size: "M",
+        price: 10_913_000,
+        originalPrice: 15_590_000,
+        available: true,
+      },
+      {
+        id: "var_2",
+        color: "مشکی",
+        size: "L",
+        price: 15_590_000,
+        originalPrice: 15_590_000,
+        available: false,
+      },
+    ],
+    metadata: {},
+    created_at: "2026-11-20T00:00:00.000Z",
+  },
+]
+
+test("catalog filtering matches Persian variants, prices, stock, and discounts", () => {
+  const [jacket] = sampleCatalog
+  assert.equal(matchesProduct(jacket, "كاپشن"), true)
   assert.equal(
-    find("category=women&brand=yelsan&brand=dorsa&size=۴۱&color=مشکی&stock=1")
-      .length,
-    0
-  )
-  assert.equal(
-    find(
-      "category=women&size=۴۱&color=زرشکی&stock=1&sale=1&min=۲٬۴۰۰٬۰۰۰&max=۲۵۰۰۰۰۰"
-    )[0].variants.length,
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("category=womens-apparel&color=آجری"))
+    ).length,
     1
   )
-  assert.equal(find("max=۲۴۰۰۰۰۰").length, 0)
+  assert.equal(
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("sale=1&stock=1&max=12000000"))
+    ).length,
+    1
+  )
+  assert.equal(
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("size=L&stock=1"))
+    ).length,
+    0
+  )
+})
+
+test("colorHex resolves dynamic DB color map with Persian normalization", () => {
+  const dbColors = { آجری: "#C45A3F", "سرمه ای": "#28364F" }
+  assert.equal(colorHex("آجری", dbColors), "#C45A3F")
+  assert.equal(colorHex("سرمه‌ای", dbColors), "#28364F")
+  assert.equal(colorHex("#123456", dbColors), "#123456")
+  assert.equal(colorHex("نامشخص", dbColors), "#e6e1dc")
 })

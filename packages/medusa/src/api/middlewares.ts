@@ -81,7 +81,9 @@ import { adminLocalesRoutesMiddlewares } from "./admin/locales/middlewares"
 import { adminTranslationsRoutesMiddlewares } from "./admin/translations/middlewares"
 import { adminBrandRoutesMiddlewares } from "./admin/brands/middlewares"
 import { adminReviewRoutesMiddlewares } from "./admin/reviews/middlewares"
+import { adminStorefrontRoutesMiddlewares } from "./admin/storefront-pages/middlewares"
 import { storeBrandRoutesMiddlewares } from "./store/brands/middlewares"
+import { storeStorefrontRoutesMiddlewares } from "./store/storefront-pages/middlewares"
 
 export default defineMiddlewares([
   ...storeRoutesMiddlewares,
@@ -168,6 +170,8 @@ export default defineMiddlewares([
   ...adminSearchRoutesMiddlewares,
   ...cloudRoutesMiddlewares,
   ...storeBrandRoutesMiddlewares,
+  ...storeStorefrontRoutesMiddlewares,
   ...adminBrandRoutesMiddlewares,
   ...adminReviewRoutesMiddlewares,
+  ...adminStorefrontRoutesMiddlewares,
 ])

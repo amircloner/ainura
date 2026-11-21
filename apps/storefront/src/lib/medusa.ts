@@ -2,14 +2,13 @@ import Medusa from "@medusajs/js-sdk"
 import type { HttpTypes, ProductFashionMetadata } from "@medusajs/types"
 import { cache } from "react"
 import { reviewStats } from "./format"
-import {
-  demoBrands,
-  demoProducts,
-  demoReviews,
-  type CatalogCategory,
-  type CatalogProduct,
-  type CatalogReview,
-  type ReviewStats,
+import type {
+  CatalogBrand,
+  CatalogCategory,
+  CatalogProduct,
+  CatalogReview,
+  DynamicStorefrontPage,
+  ReviewStats,
 } from "./seed-data"
 
 export * from "./format"
@@ -162,20 +161,43 @@ const loadCatalog = cache(async () => {
 })
 
 export const getCatalog = cache(async (): Promise<CatalogProduct[]> => {
-  if (!connected) return demoProducts
+  if (!connected) return []
   try {
     return await loadCatalog()
   } catch {
-    return demoProducts
+    return []
   }
 })
 
-export const getProduct = cache(async (handle: string) =>
-  (await getCatalog()).find((product) => product.handle === handle)
-)
+export const getProduct = cache(async (rawHandle: string) => {
+  const decoded = (() => {
+    try {
+      return decodeURIComponent(rawHandle)
+    } catch {
+      return rawHandle
+    }
+  })()
+  const lower = decoded.toLowerCase()
+  const idPrefix = decoded.match(/^(\d+)(?:-|$)/)?.[1]
+  const catalog = await getCatalog()
+  return (
+    catalog.find((product) => product.handle === decoded) ??
+    catalog.find((product) => product.handle.toLowerCase() === lower) ??
+    catalog.find((product) => product.id === decoded) ??
+    (idPrefix
+      ? catalog.find(
+          (product) =>
+            product.handle.startsWith(`${idPrefix}-`) ||
+            product.handle === idPrefix ||
+            String((product.metadata as Record<string, unknown>)?.digistyle_id) ===
+              idPrefix
+        )
+      : undefined)
+  )
+})
 
-export const getBrands = cache(async () => {
-  if (!connected) return demoBrands
+export const getBrands = cache(async (): Promise<CatalogBrand[]> => {
+  if (!connected) return []
   try {
     const { brands } = await sdk.client.fetch<HttpTypes.StoreBrandListResponse>(
       "/store/brands",
@@ -186,36 +208,78 @@ export const getBrands = cache(async () => {
     )
     return brands
   } catch {
-    return demoBrands
+    return []
   }
 })
+
+export const getStorefrontPage = cache(
+  async (slug: string): Promise<DynamicStorefrontPage | null> => {
+    if (!connected) return null
+    try {
+      const region = await getRegion()
+      const { storefront_page } = await sdk.store.storefrontPage.retrieve(
+        slug,
+        { region_id: region.id }
+      )
+      return {
+        ...storefront_page,
+        sections: (storefront_page.sections ?? []).map((section) => ({
+          ...section,
+          products: section.products?.map((p) =>
+            toCatalogProduct(p, region.currency_code)
+          ),
+          tabs: section.tabs?.map((tab) => ({
+            title: tab.title,
+            href: tab.href,
+            products: tab.products.map((p) =>
+              toCatalogProduct(p, region.currency_code)
+            ),
+          })),
+        })),
+      }
+    } catch {
+      return null
+    }
+  }
+)
+
+export const getStorefrontColors = cache(
+  async (): Promise<Record<string, string>> => {
+    if (!connected) return {}
+    try {
+      const { storefront_colors } = await sdk.store.storefrontColor.list()
+      return Object.fromEntries(
+        storefront_colors.map((c) => [c.name, c.hex_code])
+      )
+    } catch {
+      return {}
+    }
+  }
+)
 
 export async function getReviews(
   productId: string
 ): Promise<{ reviews: CatalogReview[]; stats: ReviewStats }> {
-  if (!productId.startsWith("demo_")) {
-    try {
-      const { reviews, stats } =
-        await sdk.client.fetch<HttpTypes.StoreProductReviewListResponse>(
-          `/store/products/${productId}/reviews`,
-          {
-            signal: AbortSignal.timeout(4000),
-          }
-        )
-      return { reviews, stats: stats ?? reviewStats(productId, reviews) }
-    } catch {
-      return { reviews: [], stats: reviewStats(productId, []) }
-    }
+  if (!connected) {
+    return { reviews: [], stats: reviewStats(productId, []) }
   }
-  const reviews = productId === demoProducts[0].id ? demoReviews : []
-  return { reviews, stats: reviewStats(productId, reviews) }
+  try {
+    const { reviews, stats } =
+      await sdk.client.fetch<HttpTypes.StoreProductReviewListResponse>(
+        `/store/products/${productId}/reviews`,
+        {
+          signal: AbortSignal.timeout(4000),
+        }
+      )
+    return { reviews, stats: stats ?? reviewStats(productId, reviews) }
+  } catch {
+    return { reviews: [], stats: reviewStats(productId, []) }
+  }
 }
 
 export function submitReview(
   productId: string,
   input: HttpTypes.StoreCreateProductReview
 ) {
-  if (productId.startsWith("demo_"))
-    throw new Error("ثبت دیدگاه فقط برای محصولات فروشگاه فعال است.")
   return sdk.store.review.create(productId, input)
 }

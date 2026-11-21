@@ -85,6 +85,7 @@ export const PERMISSION_GROUPS: { id: string; resources: string[] }[] = [
     resources: [
       "store",
       "store_locale",
+      "storefront_page",
       "region",
       "sales_channel",
       "currency",

@@ -211,6 +211,8 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
     useResourcePermissions("product_option")
   const { canRead: canReadBrands } = useResourcePermissions("product_brand")
   const { canRead: canReadReviews } = useResourcePermissions("product_review")
+  const { canRead: canReadStorefrontPages } =
+    useResourcePermissions("storefront_page")
 
   return [
     ...(canReadOrders
@@ -262,6 +264,21 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
       : []),
     ...(canReadReviews
       ? [{ icon: <ChatBubble />, label: t("reviews.domain"), to: "/reviews" }]
+      : []),
+    ...(canReadStorefrontPages
+      ? [
+          {
+            icon: <BuildingStorefront />,
+            label: t("storefrontPages.domain"),
+            to: "/storefront-pages",
+            items: [
+              {
+                label: t("storefrontPages.colors"),
+                to: "/storefront-pages/colors",
+              },
+            ],
+          },
+        ]
       : []),
     ...(canReadInventory
       ? [

@@ -4,10 +4,10 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useCommerce } from "@/lib/commerce"
+import { STATIC_MEGA_MENU } from "./static-nav"
 import type { CatalogBrand, CatalogProduct } from "@/lib/medusa"
 import {
   categoriesFrom,
-  categoryTrail,
   matchesProduct,
   matchesText,
 } from "../catalog/catalog"
@@ -23,16 +23,18 @@ export function Header({
   const { cart, wishlist, openCart } = useCommerce()
   const [search, setSearch] = useState(false)
   const [query, setQuery] = useState("")
-  const [menu, setMenu] = useState<string>()
+  const [activeMenuId, setActiveMenuId] = useState<number | null>(null)
   const [mobileNav, setMobileNav] = useState(false)
-  const header = useRef<HTMLElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
   const router = useRouter()
   const pathname = usePathname()
+
   const categories = categoriesFrom(products)
-  const roots = categories.filter((category) => !category.parent)
   const count = cart.reduce((sum, item) => sum + item.quantity, 0)
+  const activeMenu = STATIC_MEGA_MENU.find((m) => m.id === activeMenuId)
+
   const suggestions = query.trim()
-    ? products.filter((product) => matchesProduct(product, query)).slice(0, 5)
+    ? products.filter((product) => matchesProduct(product, query)).slice(0, 6)
     : []
   const matchingCategories = query.trim()
     ? categories
@@ -50,7 +52,7 @@ export function Header({
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setMenu(undefined)
+        setActiveMenuId(null)
         setMobileNav(false)
       }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -61,9 +63,9 @@ export function Header({
     const onPointer = (event: PointerEvent) => {
       if (
         event.target instanceof Node &&
-        !header.current?.contains(event.target)
+        !headerRef.current?.contains(event.target)
       ) {
-        setMenu(undefined)
+        setActiveMenuId(null)
         setMobileNav(false)
       }
     }
@@ -75,205 +77,212 @@ export function Header({
     }
   }, [])
 
-  function closeNavigation() {
-    setMenu(undefined)
+  function closeAll() {
+    setActiveMenuId(null)
     setMobileNav(false)
     setSearch(false)
   }
-  function toggleMenu(handle: string) {
-    setMenu((current) => (current === handle ? undefined : handle))
-  }
 
   return (
-    <header className="store-header" ref={header}>
-      <div className="store-announcement">
-        <span>
-          {products.length > 0 && products.every(({ demo }) => demo)
-            ? "آینورا | کاتالوگ آزمایشی"
-            : "آینورا، انتخابی برای هر روز"}
-        </span>
-        <Link href="/products?sale=1" onClick={closeNavigation}>
-          فروش ویژه <Icon name="left" size={12} />
-        </Link>
-      </div>
-      <div className="store-header-main store-wrap">
-        <div className="store-header-find">
+    <header
+      className="ds-header"
+      ref={headerRef}
+      onMouseLeave={() => setActiveMenuId(null)}
+    >
+      <div className="ds-header-inner">
+        <div className="ds-header-start">
           <button
-            className="store-icon store-mobile-menu"
+            className="ds-icon-btn ds-mobile-trigger"
             type="button"
-            aria-label="دسته‌بندی‌ها"
+            aria-label="منو"
             aria-expanded={mobileNav}
-            aria-controls="store-main-nav"
-            onClick={() => setMobileNav(!mobileNav)}
+            onClick={() => setMobileNav((v) => !v)}
           >
-            <Icon name="menu" />
+            <Icon name="menu" size={22} />
           </button>
+
+          <Link
+            className="ds-logo-link"
+            href="/"
+            onClick={closeAll}
+            aria-label="دیجی‌استایل"
+          >
+            <img
+              src="/digistyle/logo.svg"
+              alt="DIGISTYLE"
+              width={146}
+              height={24}
+            />
+          </Link>
+
+          <nav className="ds-nav-tabs" aria-label="دسته‌بندی‌های دیجی‌استایل">
+            {STATIC_MEGA_MENU.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="ds-nav-tab"
+                aria-expanded={activeMenuId === item.id}
+                onMouseEnter={() => setActiveMenuId(item.id)}
+                onClick={() =>
+                  setActiveMenuId((cur) => (cur === item.id ? null : item.id))
+                }
+              >
+                {item.title}
+              </button>
+            ))}
+            <Link
+              href="/landings/jackets"
+              className="ds-nav-tab"
+              data-active={pathname === "/landings/jackets" ? "true" : undefined}
+              onMouseEnter={() => setActiveMenuId(null)}
+              onClick={closeAll}
+            >
+              کاپشن و پالتو
+            </Link>
+            <Link
+              href="/products?sale=1&sort=discount"
+              className="ds-nav-tab ds-nav-tab-sale"
+              onMouseEnter={() => setActiveMenuId(null)}
+              onClick={closeAll}
+            >
+              حراج استایل
+            </Link>
+          </nav>
+        </div>
+
+        <div className="ds-header-end">
           <button
-            className="store-search-trigger"
+            className="ds-search-box"
             type="button"
-            aria-label="جستجو در آینورا"
+            aria-label="جستجو در دیجی‌استایل"
             onClick={() => setSearch(true)}
           >
-            <Icon name="search" />
-            <span>جستجو در آینورا</span>
-            <kbd dir="ltr">Ctrl K</kbd>
+            <Icon name="search" size={18} />
+            <span>
+              جستجو در <strong>دیجی‌استایل</strong>
+            </span>
           </button>
-        </div>
-        <Link
-          className="store-wordmark"
-          href="/"
-          onClick={closeNavigation}
-          aria-label="آینورا، خانه"
-        >
-          <strong>آینورا</strong>
-          <small lang="en" dir="ltr">
-            AINURA
-          </small>
-        </Link>
-        <div className="store-header-actions">
-          <Link
-            className="store-icon store-header-account"
-            href="/account"
-            aria-label="حساب کاربری"
-            onClick={closeNavigation}
-          >
-            <Icon name="user" />
-          </Link>
-          <Link
-            className="store-icon store-counter"
-            href="/wishlist"
-            aria-label={`علاقه‌مندی‌ها، ${number(wishlist.length)} کالا`}
-            onClick={closeNavigation}
-          >
-            <Icon name="heart" />
-            {wishlist.length > 0 && <span>{number(wishlist.length)}</span>}
-          </Link>
-          <button
-            className="store-icon store-counter"
-            type="button"
-            aria-label={`سبد خرید، ${number(count)} کالا`}
-            onClick={() => {
-              closeNavigation()
-              openCart()
-            }}
-          >
-            <Icon name="bag" />
-            {count > 0 && <span>{number(count)}</span>}
-          </button>
+
+          <div className="ds-header-actions">
+            <Link
+              className="ds-auth-btn"
+              href="/account"
+              aria-label="ورود یا ثبت نام"
+              onClick={closeAll}
+            >
+              <Icon name="user" size={20} />
+              <span>ورود | ثبت نام</span>
+            </Link>
+
+            <Link
+              className="ds-icon-btn"
+              href="/wishlist"
+              aria-label={`علاقه‌مندی‌ها، ${number(wishlist.length)} کالا`}
+              onClick={closeAll}
+            >
+              <Icon name="heart" size={22} />
+              {wishlist.length > 0 && (
+                <span className="ds-cart-badge">{number(wishlist.length)}</span>
+              )}
+            </Link>
+
+            <button
+              className="ds-icon-btn"
+              type="button"
+              aria-label={`سبد خرید، ${number(count)} کالا`}
+              onClick={() => {
+                closeAll()
+                openCart()
+              }}
+            >
+              <Icon name="bag" size={22} />
+              {count > 0 && (
+                <span className="ds-cart-badge">{number(count)}</span>
+              )}
+            </button>
+          </div>
         </div>
       </div>
-      <nav
-        id="store-main-nav"
-        className={`store-main-nav${mobileNav ? " store-nav-open" : ""}`}
-        aria-label="منوی اصلی"
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget))
-            setMenu(undefined)
-        }}
-      >
-        <div className="store-nav-links store-wrap">
-          {roots.map((category) => (
-            <button
-              key={category.handle}
-              className="store-nav-trigger"
-              type="button"
-              aria-expanded={menu === category.handle}
-              onClick={() => toggleMenu(category.handle)}
-            >
-              {category.name}
-              <Icon name="down" size={12} />
-            </button>
-          ))}
-          {brands.length > 0 && (
-            <button
-              className="store-nav-trigger"
-              type="button"
-              aria-expanded={menu === "brands"}
-              onClick={() => toggleMenu("brands")}
-            >
-              برندها
-              <Icon name="down" size={12} />
-            </button>
-          )}
-          <Link
-            href="/products?sale=1"
-            className="store-nav-sale"
-            onClick={closeNavigation}
-          >
-            فروش ویژه
-          </Link>
-          <Link
-            href="/products"
-            onClick={closeNavigation}
-            aria-current={pathname === "/products" ? "page" : undefined}
-          >
-            همه محصولات
-          </Link>
-          <Link
-            className="store-mobile-account"
-            href="/account"
-            onClick={closeNavigation}
-          >
-            حساب کاربری
-          </Link>
-        </div>
-        {menu && (
-          <div className="store-mega">
-            <div className="store-wrap store-mega-links">
-              {menu === "brands"
-                ? brands.map((brand) => (
-                    <Link
-                      key={brand.id}
-                      href={`/brands/${encodeURIComponent(brand.handle)}`}
-                      onClick={closeNavigation}
-                    >
-                      {brand.name}
+
+      {activeMenu && (
+        <div className="ds-mega">
+          <div className="ds-mega-inner">
+            <div className="ds-mega-top">
+              <Link
+                className="ds-mega-all"
+                href={activeMenu.href}
+                onClick={closeAll}
+              >
+                همه محصولات {activeMenu.title}
+                <Icon name="left" size={14} />
+              </Link>
+              <Link
+                className="ds-mega-all"
+                href="/landings/jackets"
+                onClick={closeAll}
+              >
+                لندینگ کاپشن و پالتو
+                <Icon name="left" size={14} />
+              </Link>
+            </div>
+            <div className="ds-mega-cols">
+              {activeMenu.children.map((sub) => (
+                <div className="ds-mega-col" key={sub.id}>
+                  <h3>
+                    <Link href={sub.href} onClick={closeAll}>
+                      {sub.title}
                     </Link>
-                  ))
-                : roots
-                    .filter((category) => category.handle === menu)
-                    .map((root) => (
-                      <div className="store-mega-categories" key={root.handle}>
-                        <Link
-                          className="store-strong"
-                          href={`/categories/${encodeURIComponent(root.handle)}`}
-                          onClick={closeNavigation}
-                        >
-                          همه محصولات {root.name}{" "}
-                          <Icon name="arrow" size={15} />
+                  </h3>
+                  <ul>
+                    {sub.items.map((leaf) => (
+                      <li key={leaf.id}>
+                        <Link href={leaf.href} onClick={closeAll}>
+                          {leaf.title}
                         </Link>
-                        {categories
-                          .filter(
-                            (category) =>
-                              category.handle !== root.handle &&
-                              categoryTrail(category).some(
-                                (item) => item.handle === root.handle
-                              )
-                          )
-                          .map((category) => (
-                            <Link
-                              key={category.handle}
-                              href={`/categories/${encodeURIComponent(category.handle)}`}
-                              onClick={closeNavigation}
-                            >
-                              {category.name}
-                            </Link>
-                          ))}
-                      </div>
+                      </li>
                     ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
+
+      {mobileNav && (
+        <div className="ds-mobile-drawer">
+          <div className="ds-mobile-drawer-links">
+            {STATIC_MEGA_MENU.map((item) => (
+              <Link key={item.id} href={item.href} onClick={closeAll}>
+                {item.title}
+              </Link>
+            ))}
+            <Link href="/landings/jackets" onClick={closeAll}>
+              کاپشن و پالتو
+            </Link>
+            <Link
+              href="/products?sale=1&sort=discount"
+              className="ds-nav-tab-sale"
+              onClick={closeAll}
+            >
+              حراج استایل
+            </Link>
+            <Link href="/products" onClick={closeAll}>
+              همه محصولات
+            </Link>
+          </div>
+        </div>
+      )}
+
       {search && (
-        <Modal label="جستجو در آینورا" onClose={() => setSearch(false)}>
+        <Modal label="جستجو در دیجی‌استایل" onClose={() => setSearch(false)}>
           <form
             className="store-search-form"
             role="search"
             onSubmit={(event) => {
               event.preventDefault()
               if (query.trim()) {
-                closeNavigation()
+                closeAll()
                 router.push(
                   `/products?${new URLSearchParams({ q: query.trim() })}`
                 )
@@ -287,7 +296,7 @@ export function Header({
               value={query}
               maxLength={150}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="محصول، برند یا دسته‌بندی"
+              placeholder="جستجو در محصولات، برندها و دسته‌بندی‌ها..."
               aria-label="عبارت جستجو"
             />
             <button
@@ -306,8 +315,8 @@ export function Header({
                   {suggestions.map((product) => (
                     <Link
                       key={product.id}
-                      href={`/products/${encodeURIComponent(product.handle)}`}
-                      onClick={closeNavigation}
+                      href={`/product/${encodeURIComponent(product.handle)}`}
+                      onClick={closeAll}
                     >
                       <Media src={product.images[0]} alt="" />
                       {product.title}
@@ -322,7 +331,7 @@ export function Header({
                     <Link
                       key={category.handle}
                       href={`/categories/${encodeURIComponent(category.handle)}`}
-                      onClick={closeNavigation}
+                      onClick={closeAll}
                     >
                       {category.name}
                       <Icon name="left" size={13} />
@@ -337,7 +346,7 @@ export function Header({
                     <Link
                       key={brand.id}
                       href={`/brands/${encodeURIComponent(brand.handle)}`}
-                      onClick={closeNavigation}
+                      onClick={closeAll}
                     >
                       {brand.name}
                       <Icon name="left" size={13} />
@@ -352,9 +361,26 @@ export function Header({
                 )}
             </div>
           ) : (
-            <p className="store-muted">
-              نام محصول، کد، برند یا دسته‌بندی را وارد کنید.
-            </p>
+            <div className="store-search-results">
+              <section>
+                <h3>جستجوهای محبوب</h3>
+                <Link href="/landings/jackets" onClick={closeAll}>
+                  کاپشن زنانه و مردانه
+                  <Icon name="left" size={13} />
+                </Link>
+                <Link
+                  href="/product/22797531-%DA%A9%D8%A7%D9%BE%D8%B4%D9%86-%D8%B2%D9%86%D8%A7%D9%86%D9%87-%D8%B4%D9%85%D8%B9%DB%8C-%D8%A7%D9%85-%DA%A9%DB%8C-%D9%85%D8%AF%D9%84-l2005"
+                  onClick={closeAll}
+                >
+                  کاپشن زنانه شمعی ام کی مدل L2005
+                  <Icon name="left" size={13} />
+                </Link>
+                <Link href="/products?sale=1&sort=discount" onClick={closeAll}>
+                  خوش‌قیمت‌های امروز
+                  <Icon name="left" size={13} />
+                </Link>
+              </section>
+            </div>
           )}
         </Modal>
       )}

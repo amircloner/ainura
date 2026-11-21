@@ -3144,6 +3144,98 @@
       ],
       "additionalProperties": false
     },
+    "storefrontPages": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "loading": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "string"
+        },
+        "createTitle": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        },
+        "deleted": {
+          "type": "string"
+        },
+        "sections": {
+          "type": "string"
+        },
+        "addSection": {
+          "type": "string"
+        },
+        "editSection": {
+          "type": "string"
+        },
+        "sectionCreated": {
+          "type": "string"
+        },
+        "sectionSaved": {
+          "type": "string"
+        },
+        "sectionDeleted": {
+          "type": "string"
+        },
+        "reordered": {
+          "type": "string"
+        },
+        "colors": {
+          "type": "string"
+        },
+        "colorSaved": {
+          "type": "string"
+        },
+        "colorDeleted": {
+          "type": "string"
+        },
+        "fashionDetails": {
+          "type": "string"
+        },
+        "fashionDetailsSaved": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "description",
+        "search",
+        "loading",
+        "empty",
+        "createTitle",
+        "created",
+        "updated",
+        "deleted",
+        "sections",
+        "addSection",
+        "editSection",
+        "sectionCreated",
+        "sectionSaved",
+        "sectionDeleted",
+        "reordered",
+        "colors",
+        "colorSaved",
+        "colorDeleted",
+        "fashionDetails",
+        "fashionDetailsSaved"
+      ],
+      "additionalProperties": false
+    },
     "brands": {
       "type": "object",
       "properties": {
@@ -15578,6 +15670,9 @@
             "store": {
               "type": "string"
             },
+            "storefront_page": {
+              "type": "string"
+            },
             "user": {
               "type": "string"
             },
@@ -15777,6 +15872,7 @@
             "price_list",
             "region",
             "store",
+            "storefront_page",
             "user",
             "role",
             "permission",
@@ -15888,6 +15984,7 @@
     "transferOwnership",
     "sales_channels",
     "products",
+    "storefrontPages",
     "brands",
     "reviews",
     "collections",

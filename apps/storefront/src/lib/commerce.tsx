@@ -47,7 +47,10 @@ function readLocal<T>(key: string, fallback: T): T {
 export const commerceError = (error: unknown) =>
   error instanceof Error ? error.message : "عملیات انجام نشد. دوباره تلاش کنید."
 
-function useCommerceState(catalog: CatalogProduct[]) {
+function useCommerceState(
+  catalog: CatalogProduct[],
+  colorMap: Record<string, string> = {}
+) {
   const [ready, setReady] = useState(false)
   const [busy, setBusy] = useState(false)
   const locked = useRef(false)
@@ -496,6 +499,7 @@ function useCommerceState(catalog: CatalogProduct[]) {
     shipping,
     total,
     currency,
+    colorMap,
     openCart: () => setCartOpen(true),
     closeCart: () => setCartOpen(false),
     addToCart,
@@ -517,12 +521,14 @@ const CommerceContext = createContext<ReturnType<
 
 export function CommerceProvider({
   catalog,
+  colorMap = {},
   children,
 }: {
   catalog: CatalogProduct[]
+  colorMap?: Record<string, string>
   children: ReactNode
 }) {
-  const commerce = useCommerceState(catalog)
+  const commerce = useCommerceState(catalog, colorMap)
   return (
     <CommerceContext.Provider value={commerce}>
       {children}

@@ -802,6 +802,29 @@
       }
     }
   },
+  "storefrontPages": {
+    "domain": "Storefront Pages",
+    "description": "Manage dynamic homepage, landing pages, banners, carousels, and color swatches.",
+    "search": "Search pages",
+    "loading": "Loading pages...",
+    "empty": "No storefront pages found.",
+    "createTitle": "Create Storefront Page",
+    "created": "Storefront page created.",
+    "updated": "Storefront page updated.",
+    "deleted": "Storefront page deleted.",
+    "sections": "Sections",
+    "addSection": "Add Section",
+    "editSection": "Edit Section",
+    "sectionCreated": "Section added.",
+    "sectionSaved": "Section saved.",
+    "sectionDeleted": "Section deleted.",
+    "reordered": "Sections reordered.",
+    "colors": "Color Swatches",
+    "colorSaved": "Color swatch saved.",
+    "colorDeleted": "Color swatch deleted.",
+    "fashionDetails": "Fashion & Seller Details",
+    "fashionDetailsSaved": "Fashion details saved."
+  },
   "brands": {
     "domain": "Brands",
     "singular": "Brand",
@@ -4043,6 +4066,7 @@
       "price_list": "Price lists",
       "region": "Regions",
       "store": "Store details",
+      "storefront_page": "Storefront pages",
       "user": "Users",
       "role": "Role",
       "permission": "Permission",

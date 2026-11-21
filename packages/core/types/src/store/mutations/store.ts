@@ -105,3 +105,61 @@ export interface UpdateStoreDTO {
    */
   metadata?: Record<string, any> | null
 }
+
+import type {
+  StorefrontPageType,
+  StorefrontSectionConfig,
+  StorefrontSectionType,
+} from "../common/store"
+
+export interface CreateStorefrontPageDTO {
+  slug: string
+  title: string
+  subtitle?: string | null
+  page_type?: StorefrontPageType
+  is_active?: boolean
+  metadata?: Record<string, unknown> | null
+}
+
+export interface UpdateStorefrontPageDTO {
+  slug?: string
+  title?: string
+  subtitle?: string | null
+  page_type?: StorefrontPageType
+  is_active?: boolean
+  metadata?: Record<string, unknown> | null
+}
+
+export interface CreateStorefrontSectionDTO {
+  page_id: string
+  type: StorefrontSectionType
+  title?: string | null
+  href?: string | null
+  rank?: number
+  is_active?: boolean
+  config?: StorefrontSectionConfig
+  metadata?: Record<string, unknown> | null
+}
+
+export interface UpdateStorefrontSectionDTO {
+  page_id?: string
+  type?: StorefrontSectionType
+  title?: string | null
+  href?: string | null
+  rank?: number
+  is_active?: boolean
+  config?: StorefrontSectionConfig
+  metadata?: Record<string, unknown> | null
+}
+
+export interface CreateStorefrontColorDTO {
+  name: string
+  hex_code: string
+  metadata?: Record<string, unknown> | null
+}
+
+export interface UpdateStorefrontColorDTO {
+  name?: string
+  hex_code?: string
+  metadata?: Record<string, unknown> | null
+}

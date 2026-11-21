@@ -2065,4 +2065,59 @@ export class Store {
       )
     },
   }
+
+  /**
+   * @tags store
+   */
+  public storefrontPage = {
+    /**
+     * List active storefront pages.
+     *
+     * @example
+     * sdk.store.storefrontPage.list()
+     */
+    list: async (
+      query?: HttpTypes.StoreStorefrontPageListParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreStorefrontPageListResponse>(
+        `/store/storefront-pages`,
+        { query, headers }
+      )
+    },
+    /**
+     * Retrieve an active storefront page and its resolved sections by slug.
+     *
+     * @example
+     * sdk.store.storefrontPage.retrieve("home", { region_id: "reg_123" })
+     */
+    retrieve: async (
+      slug: string,
+      query?: HttpTypes.StoreStorefrontPageParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreStorefrontPageResponse>(
+        `/store/storefront-pages/${encodeURIComponent(slug)}`,
+        { query, headers }
+      )
+    },
+  }
+
+  /**
+   * @tags store
+   */
+  public storefrontColor = {
+    /**
+     * List storefront color swatches.
+     *
+     * @example
+     * sdk.store.storefrontColor.list()
+     */
+    list: async (headers?: ClientHeaders) => {
+      return this.client.fetch<HttpTypes.StoreStorefrontColorListResponse>(
+        `/store/storefront-colors`,
+        { headers }
+      )
+    },
+  }
 }
