@@ -3144,6 +3144,168 @@
       ],
       "additionalProperties": false
     },
+    "brands": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "singular": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "search": {
+          "type": "string"
+        },
+        "loading": {
+          "type": "string"
+        },
+        "loadError": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "string"
+        },
+        "select": {
+          "type": "string"
+        },
+        "create": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "string"
+        },
+        "handleRequired": {
+          "type": "string"
+        },
+        "featured": {
+          "type": "string"
+        },
+        "featuredHint": {
+          "type": "string"
+        },
+        "logoUrl": {
+          "type": "string"
+        },
+        "bannerUrl": {
+          "type": "string"
+        },
+        "deleteWarning": {
+          "type": "string"
+        },
+        "created": {
+          "type": "string"
+        },
+        "updated": {
+          "type": "string"
+        },
+        "deleted": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "singular",
+        "description",
+        "search",
+        "loading",
+        "loadError",
+        "empty",
+        "select",
+        "create",
+        "edit",
+        "handleRequired",
+        "featured",
+        "featuredHint",
+        "logoUrl",
+        "bannerUrl",
+        "deleteWarning",
+        "created",
+        "updated",
+        "deleted"
+      ],
+      "additionalProperties": false
+    },
+    "reviews": {
+      "type": "object",
+      "properties": {
+        "domain": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "loading": {
+          "type": "string"
+        },
+        "empty": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "string"
+        },
+        "verifiedBuyer": {
+          "type": "string"
+        },
+        "approve": {
+          "type": "string"
+        },
+        "reject": {
+          "type": "string"
+        },
+        "deleteWarning": {
+          "type": "string"
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "pending": {
+              "type": "string"
+            },
+            "approved": {
+              "type": "string"
+            },
+            "rejected": {
+              "type": "string"
+            }
+          },
+          "required": ["pending", "approved", "rejected"],
+          "additionalProperties": false
+        },
+        "toasts": {
+          "type": "object",
+          "properties": {
+            "approved": {
+              "type": "string"
+            },
+            "rejected": {
+              "type": "string"
+            },
+            "deleted": {
+              "type": "string"
+            }
+          },
+          "required": ["approved", "rejected", "deleted"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "domain",
+        "description",
+        "loading",
+        "empty",
+        "rating",
+        "verifiedBuyer",
+        "approve",
+        "reject",
+        "deleteWarning",
+        "status",
+        "toasts"
+      ],
+      "additionalProperties": false
+    },
     "collections": {
       "type": "object",
       "properties": {
@@ -15383,6 +15545,12 @@
             "product_collection": {
               "type": "string"
             },
+            "product_brand": {
+              "type": "string"
+            },
+            "product_review": {
+              "type": "string"
+            },
             "product_tag": {
               "type": "string"
             },
@@ -15598,6 +15766,8 @@
             "product",
             "product_category",
             "product_collection",
+            "product_brand",
+            "product_review",
             "product_tag",
             "product_type",
             "inventory",
@@ -15718,6 +15888,8 @@
     "transferOwnership",
     "sales_channels",
     "products",
+    "brands",
+    "reviews",
     "collections",
     "categories",
     "productOptions",

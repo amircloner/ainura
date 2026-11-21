@@ -49,6 +49,7 @@ Medusa JS SDK: a JavaScript/TypeScript client for the Medusa Store and Admin API
 
 - `sdk.store` methods for the Store API routes, such as products, carts, and customers.
 - `sdk.admin` methods for the Admin API routes.
+- `sdk.store.brand` lists and retrieves brands. `sdk.store.review` lists approved reviews with rating statistics and submits authenticated reviews. `sdk.store.wishlist` manages the authenticated customer's saved products. `sdk.admin.brand` and `sdk.admin.review` manage brands and moderate reviews.
 - `sdk.auth` methods to register, log in, log out, and reset passwords for any actor type, such as `customer` or `user`.
 - `sdk.client.fetch` to send requests to custom API routes with the configured headers and authentication.
 - `sdk.setLocale` to send the `x-medusa-locale` header with every request.

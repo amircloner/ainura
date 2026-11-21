@@ -830,6 +830,81 @@ export function getRouteMap({
               ],
             },
             {
+              path: "/brands",
+              errorElement: <ErrorBoundary />,
+              element: (
+                <PermissionsRequirementsProvider>
+                  <RoutePermissionGuard />
+                </PermissionsRequirementsProvider>
+              ),
+              handle: {
+                breadcrumb: () => t("brands.domain"),
+                permissions: "product_brand:read",
+              },
+              children: [
+                {
+                  path: "",
+                  lazy: () => import("../../routes/brands/brand-list"),
+                  children: [
+                    {
+                      path: "create",
+                      lazy: async () => ({
+                        Component: (
+                          await import("../../routes/brands/brand-drawer")
+                        ).BrandCreate,
+                      }),
+                      handle: {
+                        permissions: [
+                          "product_brand:read",
+                          "product_brand:create",
+                        ],
+                      },
+                    },
+                  ],
+                },
+                {
+                  path: ":id",
+                  lazy: () => import("../../routes/brands/brand-detail"),
+                  handle: { breadcrumb: () => t("general.details") },
+                  children: [
+                    {
+                      path: "edit",
+                      lazy: async () => ({
+                        Component: (
+                          await import("../../routes/brands/brand-drawer")
+                        ).BrandEdit,
+                      }),
+                      handle: {
+                        permissions: [
+                          "product_brand:read",
+                          "product_brand:update",
+                        ],
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              path: "/reviews",
+              errorElement: <ErrorBoundary />,
+              element: (
+                <PermissionsRequirementsProvider>
+                  <RoutePermissionGuard />
+                </PermissionsRequirementsProvider>
+              ),
+              handle: {
+                breadcrumb: () => t("reviews.domain"),
+                permissions: "product_review:read",
+              },
+              children: [
+                {
+                  path: "",
+                  lazy: () => import("../../routes/reviews/review-list"),
+                },
+              ],
+            },
+            {
               path: "/collections",
               errorElement: <ErrorBoundary />,
               element: (

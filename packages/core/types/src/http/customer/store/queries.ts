@@ -10,3 +10,5 @@ export interface StoreCustomerAddressFilters
 export interface StoreGetCustomerParams extends SelectParams {}
 
 export interface StoreGetCustomerAddressParams extends SelectParams {}
+
+export interface StoreWishlistItemListParams extends FindParams {}

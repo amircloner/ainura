@@ -1,4 +1,7 @@
-import { validateAndTransformQuery } from "@medusajs/framework"
+import {
+  validateAndTransformBody,
+  validateAndTransformQuery,
+} from "@medusajs/framework"
 import {
   applyCrossModuleFilter,
   applyDefaultFilters,
@@ -21,6 +24,13 @@ import {
   setPricingContext,
   setTaxContext,
 } from "../../utils/middlewares"
+import { expandStoreBrandFields } from "../brands/query-config"
+import * as ReviewQueryConfig from "./[id]/reviews/query-config"
+import {
+  StoreCreateProductReview,
+  StoreGetProductReviewParams,
+  StoreGetProductReviewsParams,
+} from "./[id]/reviews/validators"
 import * as QueryConfig from "./query-config"
 import { StoreGetProductsParams } from "./validators"
 
@@ -67,6 +77,7 @@ export const storeProductRoutesMiddlewares: MiddlewareRoute[] = [
         StoreGetProductsParams,
         QueryConfig.listProductQueryConfig
       ),
+      expandStoreBrandFields,
       filterByValidSalesChannels(),
       applySalesChannelCrossModuleFilter,
       applyDefaultFilters({
@@ -100,6 +111,7 @@ export const storeProductRoutesMiddlewares: MiddlewareRoute[] = [
         StoreGetProductsParams,
         QueryConfig.retrieveProductQueryConfig
       ),
+      expandStoreBrandFields,
       applyParamsAsFilters({ id: "id" }),
       filterByValidSalesChannels(),
       applyCrossModuleFilter({
@@ -113,6 +125,28 @@ export const storeProductRoutesMiddlewares: MiddlewareRoute[] = [
       setPricingContext(),
       setTaxContext(),
       clearFiltersByKey(["region_id", "country_code", "province", "cart_id"]),
+    ],
+  },
+  {
+    method: ["GET"],
+    matcher: "/store/products/:id/reviews",
+    middlewares: [
+      validateAndTransformQuery(
+        StoreGetProductReviewsParams,
+        ReviewQueryConfig.listProductReviewQueryConfig
+      ),
+    ],
+  },
+  {
+    method: ["POST"],
+    matcher: "/store/products/:id/reviews",
+    middlewares: [
+      authenticate("customer", ["session", "bearer"]),
+      validateAndTransformBody(StoreCreateProductReview),
+      validateAndTransformQuery(
+        StoreGetProductReviewParams,
+        ReviewQueryConfig.retrieveProductReviewQueryConfig
+      ),
     ],
   },
 ]

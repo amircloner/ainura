@@ -53,6 +53,12 @@ Import shared admin components, hooks, and utilities in your admin extensions:
 import { getStylizedAmount } from "@medusajs/dashboard/lib"
 ```
 
+## Catalog Management
+
+- **Brands** (`/brands`): Search brands, open their details, and create, edit, or delete them with the corresponding `product_brand` permissions.
+- **Products**: Open the product's Edit drawer to assign or clear a brand. This requires `product:update` and `product_brand:read`.
+- **Product reviews** (`/reviews`): Filter by moderation status. Approve or reject with `product_review:update`; delete with `product_review:delete`.
+
 ## Development
 
 Run these from `packages/admin/dashboard`:

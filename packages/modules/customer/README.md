@@ -50,6 +50,7 @@ Customer Module for Medusa: manages customers, customer addresses, and customer 
 
 - Store customer contact details and multiple addresses per customer.
 - Group customers into customer groups.
+- Save products (optionally a variant) in customer wishlists, with one active item per customer and product.
 
 ## Installation
 

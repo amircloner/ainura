@@ -370,3 +370,13 @@ export interface UpdateCustomerGroupDTO {
    */
   metadata?: MetadataType
 }
+
+/**
+ * A customer wishlist item to be created.
+ */
+export interface CreateCustomerWishlistItemDTO {
+  customer_id: string
+  product_id: string
+  variant_id?: string | null
+  metadata?: MetadataType
+}

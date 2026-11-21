@@ -653,3 +653,31 @@ export type legacy_CustomerDTO = {
    */
   updated_at?: Date | string
 }
+
+/**
+ * A customer wishlist item's details.
+ */
+export interface CustomerWishlistItemDTO {
+  id: string
+  customer_id: string
+  customer?: CustomerDTO
+  product_id: string
+  variant_id?: string | null
+  metadata?: Record<string, unknown> | null
+  created_at: Date | string
+  updated_at: Date | string
+  deleted_at?: Date | string | null
+}
+
+/**
+ * Filters to apply on retrieved customer wishlist items.
+ */
+export interface FilterableCustomerWishlistItemProps
+  extends BaseFilterable<FilterableCustomerWishlistItemProps> {
+  id?: string | string[]
+  customer_id?: string | string[]
+  product_id?: string | string[]
+  variant_id?: string | string[] | null
+  created_at?: OperatorMap<string>
+  updated_at?: OperatorMap<string>
+}

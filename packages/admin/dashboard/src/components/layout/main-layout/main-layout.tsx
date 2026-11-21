@@ -1,6 +1,7 @@
 import {
   Buildings,
   BuildingStorefront,
+  ChatBubble,
   CogSixTooth,
   CurrencyDollar,
   EllipsisHorizontal,
@@ -208,6 +209,8 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
   const { canRead: canReadProductCategories } = useProductCategoryPermissions()
   const { canRead: canReadProductOptions } =
     useResourcePermissions("product_option")
+  const { canRead: canReadBrands } = useResourcePermissions("product_brand")
+  const { canRead: canReadReviews } = useResourcePermissions("product_review")
 
   return [
     ...(canReadOrders
@@ -253,6 +256,12 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
             ],
           },
         ]
+      : []),
+    ...(canReadBrands
+      ? [{ icon: <Tag />, label: t("brands.domain"), to: "/brands" }]
+      : []),
+    ...(canReadReviews
+      ? [{ icon: <ChatBubble />, label: t("reviews.domain"), to: "/reviews" }]
       : []),
     ...(canReadInventory
       ? [

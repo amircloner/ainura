@@ -51,6 +51,7 @@ Medusa's built-in commerce workflows and steps: the business flows behind the Me
 - `common` holds generic steps used across domains, such as `useQueryGraphStep`, `createRemoteLinkStep`, and `emitEventStep`.
 - Naming convention: workflows end in `Workflow` (for example, `createProductsWorkflow`), steps end in `Step` (for example, `createProductsStep`), and each has a matching ID constant (for example, `createProductsWorkflowId`).
 - Many workflows expose hooks, such as `createProductsWorkflow.hooks.productsCreated`, to run custom logic within the workflow.
+- Brand and review CRUD plus wishlist create/delete workflows support compensation. Review creation validates ratings and checks the customer's order history for the product.
 
 ## Installation
 

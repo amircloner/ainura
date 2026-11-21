@@ -224,6 +224,8 @@ export const CORE_POLICY_RESOURCES = [
   "product_type",
   "product_category",
   "product_collection",
+  "product_brand",
+  "product_review",
   "property_label",
 
   // Promotion

@@ -241,6 +241,10 @@ export interface AdminCreateProduct {
    */
   collection_id?: string | null
   /**
+   * The ID of the product's brand.
+   */
+  brand_id?: string | null
+  /**
    * The ID of the product's shipping profile.
    */
   shipping_profile_id?: string
@@ -475,6 +479,10 @@ export interface AdminUpdateProduct {
    * The ID of the associated product collection.
    */
   collection_id?: string | null
+  /**
+   * The ID of the associated brand. Set to `null` to remove the association.
+   */
+  brand_id?: string | null
   /**
    * The product's categories.
    */
@@ -839,4 +847,36 @@ export interface AdminBatchVariantInventoryItems {
   create?: AdminBatchCreateVariantInventoryItem[]
   update?: AdminBatchUpdateVariantInventoryItem[]
   delete?: AdminBatchDeleteVariantInventoryItem[]
+}
+
+export interface AdminCreateBrand {
+  name: string
+  handle?: string
+  logo_url?: string | null
+  banner_url?: string | null
+  description?: string | null
+  is_featured?: boolean
+  country?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+export interface AdminUpdateBrand {
+  name?: string
+  handle?: string
+  logo_url?: string | null
+  banner_url?: string | null
+  description?: string | null
+  is_featured?: boolean
+  country?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+export interface AdminUpdateProductReview {
+  status?: "pending" | "approved" | "rejected"
+  title?: string | null
+  content?: string
+  rating?: number
+  is_recommended?: boolean
+  verified_purchase?: boolean
+  metadata?: Record<string, unknown> | null
 }

@@ -247,6 +247,7 @@ export const CreateProduct = z
     external_id: z.string().nullish(),
     type_id: z.string().nullish(),
     collection_id: z.string().nullish(),
+    brand_id: z.string().nullish(),
     categories: z.array(IdAssociation).optional(),
     tags: z.array(IdAssociation).optional(),
     options: z
@@ -308,6 +309,7 @@ export const UpdateProduct = z
     type_id: z.string().nullish(),
     external_id: z.string().nullish(),
     collection_id: z.string().nullish(),
+    brand_id: z.string().nullish(),
     categories: z.array(IdAssociation).optional(),
     tags: z.array(IdAssociation).optional(),
     sales_channels: z.array(z.object({ id: z.string() })).optional(),

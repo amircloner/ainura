@@ -29,6 +29,7 @@ await customerModule.addCustomerToGroup({
 - `CustomerAddress` (`cuaddr_`): address fields plus `is_default_shipping` / `is_default_billing`. Partial unique indexes allow one default of each per customer.
 - `CustomerGroup` (`cusgroup_`): `name` (unique among non-deleted, translatable), `metadata`, `created_by`.
 - `CustomerGroupCustomer` (`cusgc_`): pivot with `created_by`, `metadata`.
+- `CustomerWishlistItem` (`cwish_`): one active row per customer and product, with an optional variant ID. Items cascade when their customer is deleted. Resolve wishlist products and variants through Query.
 
 ### Custom service methods (`src/services/customer-module.ts`)
 

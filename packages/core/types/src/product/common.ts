@@ -88,6 +88,22 @@ export interface ProductDTO {
    */
   collection_id: string | null
   /**
+   * The associated product brand.
+   *
+   * @expandable
+   */
+  brand?: ProductBrandDTO | null
+  /**
+   * The associated product brand id.
+   */
+  brand_id?: string | null
+  /**
+   * The associated product reviews.
+   *
+   * @expandable
+   */
+  reviews?: ProductReviewDTO[] | null
+  /**
    * The associated product categories.
    *
    * @expandable
@@ -822,6 +838,10 @@ export interface FilterableProductProps
    * Filters a product by the IDs of their associated collections.
    */
   collection_id?: string | string[] | OperatorMap<string | string[]>
+  /**
+   * Filters a product by the IDs of their associated brands.
+   */
+  brand_id?: string | string[] | OperatorMap<string | string[]>
   /**
    * Filters a product based on when it was created
    */
@@ -1654,6 +1674,10 @@ export interface CreateProductDTO {
    */
   collection_id?: string | null
   /**
+   * The product brand to associate with the product.
+   */
+  brand_id?: string | null
+  /**
    * The tags to be associated with the product.
    */
   tag_ids?: string[]
@@ -1786,6 +1810,10 @@ export interface UpdateProductDTO {
    */
   collection_id?: string | null
   /**
+   * The product brand to associate with the product.
+   */
+  brand_id?: string | null
+  /**
    * The tags to associate with the product
    */
   tag_ids?: string[]
@@ -1888,4 +1916,133 @@ export type ProductOptionProductValueUpdate = {
    * The IDs of specific option values to remove from the product option.
    */
   remove?: string[]
+}
+
+/**
+ * Structured fashion & apparel product metadata stored in `product.metadata`.
+ */
+export interface ProductFashionMetadata {
+  /**
+   * Internal or manufacturer style/product code (e.g., "KLR-601").
+   */
+  product_code?: string
+  /**
+   * Technical specifications table displayed on the product detail page.
+   */
+  specifications?: Array<{
+    label: string
+    value: string
+  }>
+  /**
+   * Size guide chart and measurement instructions.
+   */
+  size_guide?: {
+    columns: string[]
+    rows: string[][]
+    measurement_note?: string
+  }
+  /**
+   * Official warranty or authenticity guarantee label.
+   */
+  warranty?: string
+  /**
+   * Official seller or distributor display name.
+   */
+  seller_name?: string
+  /**
+   * Estimated preparation/shipping lead time in days.
+   */
+  lead_time_days?: number
+  /**
+   * Return policy summary for the product.
+   */
+  return_policy?: string
+}
+
+/**
+ * A product brand's data.
+ */
+export interface ProductBrandDTO {
+  id: string
+  name: string
+  handle: string
+  logo_url?: string | null
+  banner_url?: string | null
+  description?: string | null
+  is_featured: boolean
+  country?: string | null
+  products?: ProductDTO[]
+  metadata?: MetadataType
+  created_at: string | Date
+  updated_at: string | Date
+  deleted_at?: string | Date | null
+}
+
+/**
+ * Filters to apply on retrieved product brands.
+ */
+export interface FilterableProductBrandProps
+  extends BaseFilterable<FilterableProductBrandProps> {
+  q?: string
+  id?: string | string[] | OperatorMap<string | string[]>
+  name?: string | string[] | OperatorMap<string | string[]>
+  handle?: string | string[] | OperatorMap<string | string[]>
+  is_featured?: boolean
+  country?: string | string[]
+  created_at?: string | OperatorMap<string>
+  updated_at?: string | OperatorMap<string>
+  deleted_at?: string | OperatorMap<string>
+}
+
+export type ProductReviewStatus = "pending" | "approved" | "rejected"
+
+/**
+ * A product review's data.
+ */
+export interface ProductReviewDTO {
+  id: string
+  product_id: string
+  product?: ProductDTO
+  customer_id?: string | null
+  customer_name: string
+  rating: number
+  title?: string | null
+  content: string
+  pros?: string[] | null
+  cons?: string[] | null
+  is_recommended: boolean
+  verified_purchase: boolean
+  status: ProductReviewStatus
+  metadata?: MetadataType
+  created_at: string | Date
+  updated_at: string | Date
+  deleted_at?: string | Date | null
+}
+
+/**
+ * Aggregated review statistics for a product.
+ */
+export interface ProductReviewStatsDTO {
+  product_id: string
+  average_rating: number
+  total_count: number
+  recommendation_percentage: number
+  distribution: Record<1 | 2 | 3 | 4 | 5, number>
+}
+
+/**
+ * Filters to apply on retrieved product reviews.
+ */
+export interface FilterableProductReviewProps
+  extends BaseFilterable<FilterableProductReviewProps> {
+  q?: string
+  id?: string | string[] | OperatorMap<string | string[]>
+  product_id?: string | string[] | OperatorMap<string | string[]>
+  customer_id?: string | string[] | OperatorMap<string | string[]>
+  rating?: number | number[] | OperatorMap<number>
+  status?: ProductReviewStatus | ProductReviewStatus[]
+  is_recommended?: boolean
+  verified_purchase?: boolean
+  created_at?: string | OperatorMap<string>
+  updated_at?: string | OperatorMap<string>
 }

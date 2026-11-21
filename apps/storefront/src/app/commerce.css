@@ -1,0 +1,208 @@
+.commerce-page {
+  max-width: 1120px;
+  min-height: 48vh;
+  margin-inline: auto;
+  padding: clamp(24px, 5vw, 72px) clamp(16px, 3vw, 32px);
+}
+.commerce-page h1 {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-block: 0 24px;
+}
+.commerce-page h2,
+.commerce-dialog h2,
+.commerce-drawer h2 {
+  font-size: 1.16rem;
+  font-weight: 750;
+}
+.commerce-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.commerce-stack {
+  display: grid;
+  gap: 14px;
+}
+.commerce-panel,
+.commerce-line {
+  padding: clamp(14px, 2vw, 24px);
+  border: 1px solid #e5e3df;
+  background: #fff;
+}
+.commerce-line {
+  display: flex;
+  align-items: start;
+  gap: 16px;
+}
+.commerce-line img {
+  width: 76px;
+  height: 90px;
+  object-fit: cover;
+  background: #edeae4;
+}
+.commerce-line p {
+  color: #61605c;
+  font-size: 0.875rem;
+  margin-block: 6px;
+}
+.commerce-row,
+.commerce-actions,
+.commerce-quantity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.commerce-row {
+  justify-content: space-between;
+}
+.commerce-quantity {
+  margin-top: 8px;
+}
+.commerce-page button,
+.commerce-drawer button,
+.commerce-dialog button {
+  padding: 7px 12px;
+  border: 1px solid #dfddd9;
+  cursor: pointer;
+}
+.commerce-page button:disabled,
+.commerce-drawer button:disabled,
+.commerce-dialog button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.commerce-page a:not(.commerce-primary),
+.commerce-drawer a:not(.commerce-primary) {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.commerce-page .commerce-primary,
+.commerce-drawer .commerce-primary,
+.commerce-dialog .commerce-primary {
+  display: inline-block;
+  padding: 10px 18px;
+  background: #111;
+  color: #fff;
+  text-align: center;
+  border-color: #111;
+}
+.commerce-total {
+  border-top: 1px solid #e5e3df;
+  padding-top: 12px;
+}
+.commerce-page label:not(.commerce-option),
+.commerce-drawer label,
+.commerce-dialog label {
+  display: grid;
+  gap: 5px;
+}
+.commerce-page input:not([type="radio"]),
+.commerce-page select,
+.commerce-dialog input {
+  width: 100%;
+  border: 1px solid #cbc8c3;
+  padding: 8px 10px;
+  background: #fff;
+}
+.commerce-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.commerce-wide {
+  grid-column: 1 / -1;
+}
+.commerce-tag {
+  padding: 8px 12px;
+  background: #f3eee6;
+  color: #493d29;
+}
+.commerce-error {
+  color: #ad1b36;
+  margin-top: 12px;
+}
+.commerce-steps {
+  display: flex;
+  gap: 12px;
+  margin-block: 16px;
+}
+.commerce-steps li {
+  border-bottom: 2px solid #ddd;
+  padding: 8px 12px;
+}
+.commerce-steps [aria-current] {
+  border-color: #111;
+  font-weight: 750;
+}
+.commerce-option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #e5e3df;
+}
+.commerce-page progress,
+.commerce-drawer progress {
+  width: 100%;
+  accent-color: #111;
+}
+.commerce-dialog,
+.commerce-drawer {
+  border: 1px solid #e5e3df;
+  background: #fafafa;
+  color: #111;
+  max-width: 100vw;
+}
+.commerce-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(440px, 100vw - 24px);
+  padding: 20px;
+}
+.commerce-dialog form {
+  margin-top: 16px;
+}
+.commerce-drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(440px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+}
+.commerce-drawer-body {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+.commerce-dialog::backdrop,
+.commerce-drawer::backdrop {
+  background: rgb(0 0 0 / 48%);
+}
+.commerce-notice {
+  position: fixed;
+  z-index: 30;
+  inset: auto 18px 18px auto;
+  max-width: min(420px, calc(100vw - 36px));
+  pointer-events: none;
+}
+.commerce-notice span {
+  display: block;
+  background: #111;
+  color: #fff;
+  padding: 10px 16px;
+}
+@media (max-width: 700px) {
+  .commerce-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 430px) {
+  .commerce-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

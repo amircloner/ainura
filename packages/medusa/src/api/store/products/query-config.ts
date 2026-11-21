@@ -1,3 +1,4 @@
+import { storeProductBrandFields } from "../brands/query-config"
 import { buildAllowedFields } from "../utils/allowed-fields"
 
 export const defaultStoreProductFields = [
@@ -10,6 +11,7 @@ export const defaultStoreProductFields = [
   "discountable",
   "thumbnail",
   "collection_id",
+  "brand_id",
   "type_id",
   "weight",
   "length",
@@ -23,6 +25,7 @@ export const defaultStoreProductFields = [
   "updated_at",
   "*type",
   "*collection",
+  ...storeProductBrandFields,
   "*options",
   "*options.values",
   "*tags",
@@ -34,6 +37,10 @@ export const defaultStoreProductFields = [
 export const allowedStoreProductExtraFields = [
   "metadata",
   "categories",
+  "categories.id",
+  "categories.handle",
+  "categories.name",
+  "categories.parent_category_id",
   "status",
   "external_id",
   "deleted_at",
@@ -68,6 +75,7 @@ export const allowedStoreProductExtraFields = [
   "variants.updated_at",
   "variants.deleted_at",
   "variants.options.id",
+  "variants.options.option_id",
   "variants.options.value",
   "options.id",
   "options.title",
@@ -98,8 +106,10 @@ export const retrieveProductQueryConfig = {
   defaults: defaultStoreProductFields,
   allowed: buildAllowedFields(
     defaultStoreProductFields,
-    allowedStoreProductExtraFields
+    allowedStoreProductExtraFields,
+    ["brand"]
   ),
+  disallowed: ["reviews"],
   storeRelationsLimit: 4,
   isList: false,
 }

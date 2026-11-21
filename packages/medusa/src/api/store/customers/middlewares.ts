@@ -3,9 +3,11 @@ import * as QueryConfig from "./query-config"
 import {
   StoreCreateCustomer,
   StoreCreateCustomerAddress,
+  StoreCreateWishlistItem,
   StoreGetCustomerAddressesParams,
   StoreGetCustomerAddressParams,
   StoreGetCustomerParams,
+  StoreGetWishlistParams,
   StoreUpdateCustomer,
   StoreUpdateCustomerAddress,
 } from "./validators"
@@ -107,6 +109,27 @@ export const storeCustomerRoutesMiddlewares: MiddlewareRoute[] = [
       validateAndTransformQuery(
         StoreGetCustomerAddressParams,
         QueryConfig.retrieveTransformQueryConfig
+      ),
+    ],
+  },
+  {
+    method: ["GET"],
+    matcher: "/store/customers/me/wishlist",
+    middlewares: [
+      validateAndTransformQuery(
+        StoreGetWishlistParams,
+        QueryConfig.listWishlistTransformQueryConfig
+      ),
+    ],
+  },
+  {
+    method: ["POST"],
+    matcher: "/store/customers/me/wishlist",
+    middlewares: [
+      validateAndTransformBody(StoreCreateWishlistItem),
+      validateAndTransformQuery(
+        StoreGetCustomerParams,
+        QueryConfig.retrieveWishlistTransformQueryConfig
       ),
     ],
   },

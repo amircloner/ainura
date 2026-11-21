@@ -19,6 +19,7 @@ moduleIntegrationTestRunner<ICustomerModuleService>({
           "customer",
           "customerGroup",
           "customerGroupCustomer",
+          "customerWishlistItem",
         ])
 
         Object.keys(linkable).forEach((key) => {
@@ -53,7 +54,7 @@ moduleIntegrationTestRunner<ICustomerModuleService>({
               field: "customerGroup",
             },
           },
-          customer: {
+        customer: {
             id: {
               linkable: "customer_id",
               entity: "Customer",
@@ -61,8 +62,42 @@ moduleIntegrationTestRunner<ICustomerModuleService>({
               serviceName: "customer",
               field: "customer",
             },
+        },
+        customerWishlistItem: {
+          id: {
+            linkable: "customer_wishlist_item_id",
+            entity: "CustomerWishlistItem",
+            primaryKey: "id",
+            serviceName: "customer",
+            field: "customerWishlistItem",
           },
+        },
+      })
+      })
+
+      it("enforces wishlist uniqueness and preserves original IDs on restore", async () => {
+        const customer = await service.createCustomers({
+          email: "wishlist@example.com",
         })
+        const data = {
+          customer_id: customer.id,
+          product_id: "prod_wool_coat",
+          variant_id: "variant_small",
+        }
+        const item = await service.createCustomerWishlistItems(data)
+        expect(item.id).toMatch(/^cwish_/)
+        await expect(
+          service.createCustomerWishlistItems({ ...data, variant_id: "variant_large" })
+        ).rejects.toThrow()
+
+        await service.softDeleteCustomerWishlistItems([item.id])
+        expect(await service.listCustomerWishlistItems(data)).toEqual([])
+        await service.restoreCustomerWishlistItems([item.id])
+        expect(await service.listCustomerWishlistItems(data)).toMatchObject([
+          { ...data, id: item.id },
+        ])
+        await service.softDeleteCustomers([customer.id])
+        expect(await service.listCustomerWishlistItems(data)).toEqual([])
       })
 
       describe("create", () => {

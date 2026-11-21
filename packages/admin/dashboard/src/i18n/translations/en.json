@@ -802,6 +802,48 @@
       }
     }
   },
+  "brands": {
+    "domain": "Brands",
+    "singular": "Brand",
+    "description": "Manage product brands across the catalog.",
+    "search": "Search brands",
+    "loading": "Loading brands...",
+    "loadError": "Could not load brands.",
+    "empty": "No brands to display.",
+    "select": "Select a brand",
+    "create": "Create brand",
+    "edit": "Edit brand",
+    "handleRequired": "Enter a handle.",
+    "featured": "Featured",
+    "featuredHint": "Mark this brand for featured placement in the storefront.",
+    "logoUrl": "Logo URL",
+    "bannerUrl": "Banner URL",
+    "deleteWarning": "You are about to delete the brand {{name}}. This action cannot be undone.",
+    "created": "Brand created.",
+    "updated": "Brand updated.",
+    "deleted": "Brand deleted."
+  },
+  "reviews": {
+    "domain": "Product reviews",
+    "description": "Moderate customer ratings and reviews.",
+    "loading": "Loading reviews...",
+    "empty": "No reviews to display.",
+    "rating": "{{rating}} / 5",
+    "verifiedBuyer": "Verified buyer",
+    "approve": "Approve",
+    "reject": "Reject",
+    "deleteWarning": "You are about to delete this review. This action cannot be undone.",
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "toasts": {
+      "approved": "Review approved.",
+      "rejected": "Review rejected.",
+      "deleted": "Review deleted."
+    }
+  },
   "collections": {
     "domain": "Collections",
     "subtitle": "Organize products into collections.",
@@ -3990,6 +4032,8 @@
       "product": "Products",
       "product_category": "Product categories",
       "product_collection": "Product collections",
+      "product_brand": "Product brands",
+      "product_review": "Product reviews",
       "product_tag": "Product tags",
       "product_type": "Product types",
       "inventory": "Inventory",

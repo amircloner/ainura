@@ -10,3 +10,9 @@ export interface StoreUpdateCustomer extends Omit<BaseUpdateCustomer, "email"> {
 
 export interface StoreCreateCustomerAddress extends BaseCreateCustomerAddress {}
 export interface StoreUpdateCustomerAddress extends BaseUpdateCustomerAddress {}
+
+export interface StoreCreateWishlistItem {
+  product_id: string
+  variant_id?: string | null
+  metadata?: Record<string, unknown> | null
+}

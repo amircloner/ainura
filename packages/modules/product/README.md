@@ -52,6 +52,7 @@ Product Module for Medusa: manages products, product variants, options and optio
 - Share options across products, or keep an option exclusive to one product.
 - Organize products with nested categories, collections, tags, and types.
 - Attach images to products and to specific variants.
+- Associate products with brands, store moderated customer reviews, and use `ProductFashionMetadata` for specifications, size guides, seller, and warranty details in `product.metadata`.
 
 ## Installation
 

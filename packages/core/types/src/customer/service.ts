@@ -7,16 +7,19 @@ import {
   CustomerDTO,
   CustomerGroupCustomerDTO,
   CustomerGroupDTO,
+  CustomerWishlistItemDTO,
   FilterableCustomerAddressProps,
   FilterableCustomerGroupCustomerProps,
   FilterableCustomerGroupProps,
   FilterableCustomerProps,
+  FilterableCustomerWishlistItemProps,
   GroupCustomerPair,
 } from "./common"
 import {
   CreateCustomerAddressDTO,
   CreateCustomerDTO,
   CreateCustomerGroupDTO,
+  CreateCustomerWishlistItemDTO,
   CustomerGroupUpdatableFields,
   CustomerUpdatableFields,
   UpdateCustomerAddressDTO,
@@ -1155,6 +1158,50 @@ export interface ICustomerModuleService extends IModuleService {
    */
   restoreCustomerGroups<TReturnableLinkableKeys extends string = string>(
     groupIds: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<TReturnableLinkableKeys, string[]> | void>
+
+  retrieveCustomerWishlistItem(
+    id: string,
+    config?: FindConfig<CustomerWishlistItemDTO>,
+    sharedContext?: Context
+  ): Promise<CustomerWishlistItemDTO>
+
+  listCustomerWishlistItems(
+    filters?: FilterableCustomerWishlistItemProps,
+    config?: FindConfig<CustomerWishlistItemDTO>,
+    sharedContext?: Context
+  ): Promise<CustomerWishlistItemDTO[]>
+
+  listAndCountCustomerWishlistItems(
+    filters?: FilterableCustomerWishlistItemProps,
+    config?: FindConfig<CustomerWishlistItemDTO>,
+    sharedContext?: Context
+  ): Promise<[CustomerWishlistItemDTO[], number]>
+
+  createCustomerWishlistItems(
+    data: CreateCustomerWishlistItemDTO[],
+    sharedContext?: Context
+  ): Promise<CustomerWishlistItemDTO[]>
+  createCustomerWishlistItems(
+    data: CreateCustomerWishlistItemDTO,
+    sharedContext?: Context
+  ): Promise<CustomerWishlistItemDTO>
+
+  deleteCustomerWishlistItems(
+    ids: string | string[],
+    sharedContext?: Context
+  ): Promise<void>
+
+  softDeleteCustomerWishlistItems<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<TReturnableLinkableKeys, string[]> | void>
+
+  restoreCustomerWishlistItems<TReturnableLinkableKeys extends string = string>(
+    ids: string[],
     config?: RestoreReturn<TReturnableLinkableKeys>,
     sharedContext?: Context
   ): Promise<Record<TReturnableLinkableKeys, string[]> | void>

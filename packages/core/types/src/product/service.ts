@@ -8,14 +8,17 @@ import {
   CreateProductTagDTO,
   CreateProductTypeDTO,
   CreateProductVariantDTO,
+  FilterableProductBrandProps,
   FilterableProductCategoryProps,
   FilterableProductCollectionProps,
   FilterableProductOptionProps,
   FilterableProductOptionValueProps,
   FilterableProductProps,
+  FilterableProductReviewProps,
   FilterableProductTagProps,
   FilterableProductTypeProps,
   FilterableProductVariantProps,
+  ProductBrandDTO,
   ProductCategoryDTO,
   ProductCollectionDTO,
   ProductDTO,
@@ -23,6 +26,7 @@ import {
   ProductOptionProductPair,
   ProductOptionProductValueUpdate,
   ProductOptionValueDTO,
+  ProductReviewDTO,
   ProductTagDTO,
   ProductTypeDTO,
   ProductVariantDTO,
@@ -42,6 +46,12 @@ import {
   UpsertProductTypeDTO,
   UpsertProductVariantDTO,
 } from "./common"
+import type {
+  CreateProductBrandDTO,
+  CreateProductReviewDTO,
+  UpdateProductBrandDTO,
+  UpdateProductReviewDTO,
+} from "./mutations"
 
 import { FindConfig } from "../common"
 import { IModuleService } from "../modules-sdk"
@@ -3039,6 +3049,112 @@ export interface IProductModuleService extends IModuleService {
    */
   restoreProductCategories<TReturnableLinkableKeys extends string = string>(
     categoryIds: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+
+  retrieveProductBrand(
+    brandId: string,
+    config?: FindConfig<ProductBrandDTO>,
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO>
+
+  listProductBrands(
+    filters?: FilterableProductBrandProps,
+    config?: FindConfig<ProductBrandDTO>,
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO[]>
+
+  listAndCountProductBrands(
+    filters?: FilterableProductBrandProps,
+    config?: FindConfig<ProductBrandDTO>,
+    sharedContext?: Context
+  ): Promise<[ProductBrandDTO[], number]>
+
+  createProductBrands(
+    data: CreateProductBrandDTO[],
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO[]>
+  createProductBrands(
+    data: CreateProductBrandDTO,
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO>
+
+  updateProductBrands(
+    data: UpdateProductBrandDTO,
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO>
+  updateProductBrands(
+    data: UpdateProductBrandDTO[],
+    sharedContext?: Context
+  ): Promise<ProductBrandDTO[]>
+
+  deleteProductBrands(
+    ids: string | string[],
+    sharedContext?: Context
+  ): Promise<void>
+
+  softDeleteProductBrands<TReturnableLinkableKeys extends string = string>(
+    brandIds: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+
+  restoreProductBrands<TReturnableLinkableKeys extends string = string>(
+    brandIds: string[],
+    config?: RestoreReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+
+  retrieveProductReview(
+    reviewId: string,
+    config?: FindConfig<ProductReviewDTO>,
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO>
+
+  listProductReviews(
+    filters?: FilterableProductReviewProps,
+    config?: FindConfig<ProductReviewDTO>,
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO[]>
+
+  listAndCountProductReviews(
+    filters?: FilterableProductReviewProps,
+    config?: FindConfig<ProductReviewDTO>,
+    sharedContext?: Context
+  ): Promise<[ProductReviewDTO[], number]>
+
+  createProductReviews(
+    data: CreateProductReviewDTO[],
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO[]>
+  createProductReviews(
+    data: CreateProductReviewDTO,
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO>
+
+  updateProductReviews(
+    data: UpdateProductReviewDTO,
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO>
+  updateProductReviews(
+    data: UpdateProductReviewDTO[],
+    sharedContext?: Context
+  ): Promise<ProductReviewDTO[]>
+
+  deleteProductReviews(
+    ids: string | string[],
+    sharedContext?: Context
+  ): Promise<void>
+
+  softDeleteProductReviews<TReturnableLinkableKeys extends string = string>(
+    reviewIds: string[],
+    config?: SoftDeleteReturn<TReturnableLinkableKeys>,
+    sharedContext?: Context
+  ): Promise<Record<string, string[]> | void>
+
+  restoreProductReviews<TReturnableLinkableKeys extends string = string>(
+    reviewIds: string[],
     config?: RestoreReturn<TReturnableLinkableKeys>,
     sharedContext?: Context
   ): Promise<Record<string, string[]> | void>

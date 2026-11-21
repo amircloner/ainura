@@ -40,6 +40,8 @@ export const PERMISSION_GROUPS: { id: string; resources: string[] }[] = [
       "product_type",
       "product_category",
       "product_collection",
+      "product_brand",
+      "product_review",
       "property_label",
     ],
   },

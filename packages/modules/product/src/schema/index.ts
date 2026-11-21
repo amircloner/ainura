@@ -25,6 +25,9 @@ type Product {
   material: String
   collection: ProductCollection
   collection_id: String
+  brand: ProductBrand
+  brand_id: String
+  reviews: [ProductReview]
   categories: [ProductCategory]
   type: ProductType
   type_id: String
@@ -163,6 +166,48 @@ type ProductVariantProductImage {
   variant_id: String!
   image: ProductImage!
   image_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+}
+
+type ProductBrand {
+  id: ID!
+  name: String!
+  handle: String!
+  logo_url: String
+  banner_url: String
+  description: String
+  is_featured: Boolean!
+  country: String
+  metadata: JSON
+  products: [Product]
+  created_at: DateTime!
+  updated_at: DateTime!
+  deleted_at: DateTime
+}
+
+enum ProductReviewStatus {
+  pending
+  approved
+  rejected
+}
+
+type ProductReview {
+  id: ID!
+  product: Product
+  product_id: String!
+  customer_id: String
+  customer_name: String!
+  rating: Int!
+  title: String
+  content: String!
+  pros: JSON
+  cons: JSON
+  is_recommended: Boolean!
+  verified_purchase: Boolean!
+  status: ProductReviewStatus!
+  metadata: JSON
   created_at: DateTime!
   updated_at: DateTime!
   deleted_at: DateTime

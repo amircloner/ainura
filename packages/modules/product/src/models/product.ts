@@ -1,10 +1,12 @@
 import { model, ProductUtils } from "@medusajs/framework/utils"
 
+import ProductBrand from "./product-brand"
 import ProductCategory from "./product-category"
 import ProductCollection from "./product-collection"
 import ProductImage from "./product-image"
 import ProductOption from "./product-option"
 import ProductProductOption from "./product-product-option"
+import ProductReview from "./product-review"
 import ProductTag from "./product-tag"
 import ProductType from "./product-type"
 import ProductVariant from "./product-variant"
@@ -136,6 +138,20 @@ const Product = model
       })
       .nullable(),
     /**
+     * The associated product brand.
+     */
+    brand: model
+      .belongsTo(() => ProductBrand, {
+        mappedBy: "products",
+      })
+      .nullable(),
+    /**
+     * The product's customer reviews.
+     */
+    reviews: model.hasMany(() => ProductReview, {
+      mappedBy: "product",
+    }),
+    /**
      * The associated product categories.
      */
     categories: model.manyToMany(() => ProductCategory, {
@@ -144,7 +160,7 @@ const Product = model
     }),
   })
   .cascades({
-    delete: ["variants", "images"],
+    delete: ["variants", "images", "reviews"],
     detach: ["options"],
   })
   .indexes([
@@ -163,6 +179,12 @@ const Product = model
     {
       name: "IDX_product_collection_id",
       on: ["collection_id"],
+      unique: false,
+      where: "deleted_at IS NULL",
+    },
+    {
+      name: "IDX_product_brand_id",
+      on: ["brand_id"],
       unique: false,
       where: "deleted_at IS NULL",
     },

@@ -21,6 +21,7 @@ const { result } = await createProductsWorkflow(req.scope).run({
 
 - Inside a custom workflow, call a prebuilt workflow with `.runAsStep({ input })`, and reuse prebuilt steps directly (e.g. `useQueryGraphStep`, `createRemoteLinkStep`, `emitEventStep`, `acquireLockStep`/`releaseLockStep`).
 - `useQueryGraphStep` has the fixed step name `use-query-graph-step`; call `.config({ name: "..." })` when using it more than once in a workflow.
+- Use the product brand and review CRUD workflows and the customer wishlist create/delete workflows for compensatable writes. Review creation derives `verified_purchase` from non-draft, non-canceled orders; caller-supplied verification is ignored. Wishlist deletion restores the original item IDs on rollback.
 
 ### Extending via hooks
 

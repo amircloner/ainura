@@ -2,6 +2,7 @@ import { model } from "@medusajs/framework/utils"
 import CustomerAddress from "./address"
 import CustomerGroup from "./customer-group"
 import CustomerGroupCustomer from "./customer-group-customer"
+import CustomerWishlistItem from "./wishlist-item"
 
 const Customer = model
   .define("Customer", {
@@ -21,9 +22,12 @@ const Customer = model
     addresses: model.hasMany(() => CustomerAddress, {
       mappedBy: "customer",
     }),
+    wishlist_items: model.hasMany(() => CustomerWishlistItem, {
+      mappedBy: "customer",
+    }),
   })
   .cascades({
-    delete: ["addresses"],
+    delete: ["addresses", "wishlist_items"],
     detach: ["groups"],
   })
   .indexes([

@@ -22,6 +22,7 @@ await productModuleService.createProducts({
 - Options (since 2.16.0): `ProductOption` (`opt_`, `is_exclusive`) is linked to products through `ProductProductOption` (`prodopt_`), which selects a subset of the option's `ProductOptionValue`s via `ProductProductOptionValue`. Global options (`is_exclusive: false`) are shared across products; options created inline in `createProducts` default to exclusive.
 - Variants link to option values (many-to-many) and to images via `ProductVariantProductImage`.
 - `ProductCategory` (`pcat_`): tree with `parent_category`, `mpath`, sibling `rank`, `is_active`, `is_internal`.
+- `ProductBrand` (`pbrand_`): optional `Product.brand` relation; handles are unique among active brands. `ProductReview` (`prev_`): belongs to a product, rating 1–5, moderation status, and verified purchase flag. Deleting products cascades to reviews.
 
 **Custom service methods** (`src/services/product-module-service.ts`): `addProductOptionToProduct`, `removeProductOptionFromProduct`, `updateProductOptionValuesOnProduct`, `updateProductOptionValues`, `addImageToVariant`, `removeImageFromVariant`; `create/update/upsert` for products, variants, options, tags, types, collections, categories and `list/retrieve` for products and variants are overridden with extra validation and relation handling.
 

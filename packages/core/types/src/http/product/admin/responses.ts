@@ -5,9 +5,11 @@ import {
   PaginatedResponse,
 } from "../../common"
 import {
+  AdminBrand,
   AdminProduct,
   AdminProductOption,
   AdminProductOptionValue,
+  AdminProductReview,
   AdminProductVariant,
   AdminProductVariantInventoryLink,
 } from "./entitites"
@@ -156,3 +158,24 @@ export interface AdminBatchVariantImagesResponse {
    */
   removed: string[]
 }
+
+export interface AdminBrandResponse {
+  brand: AdminBrand
+}
+
+export type AdminBrandListResponse = PaginatedResponse<{
+  brands: AdminBrand[]
+}>
+
+export interface AdminBrandDeleteResponse extends DeleteResponse<"brand"> {}
+
+export interface AdminProductReviewResponse {
+  review: AdminProductReview
+}
+
+export type AdminProductReviewListResponse = PaginatedResponse<{
+  reviews: AdminProductReview[]
+}>
+
+export interface AdminProductReviewDeleteResponse
+  extends DeleteResponse<"review"> {}

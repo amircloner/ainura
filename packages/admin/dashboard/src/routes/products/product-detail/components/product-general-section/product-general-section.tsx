@@ -2,12 +2,13 @@ import { GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import { Container, Heading, StatusBadge, toast, usePrompt } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import {
   ActionGroup,
   ActionMenu,
 } from "../../../../../components/common/action-menu"
+import { PermissionGuard } from "../../../../../components/common/permission-guard"
 import { SectionRow } from "../../../../../components/common/section"
 import { useDeleteProduct } from "../../../../../hooks/api/products"
 import { useExtension } from "../../../../../providers/extension-provider"
@@ -130,6 +131,16 @@ export const ProductGeneralSection = ({
       <SectionRow title={t("fields.description")} value={product.description} />
       <SectionRow title={t("fields.subtitle")} value={product.subtitle} />
       <SectionRow title={t("fields.handle")} value={`/${product.handle}`} />
+      <PermissionGuard permission="product_brand:read">
+        <SectionRow
+          title={t("brands.singular")}
+          value={product.brand && (
+            <Link className="hover:underline" to={`/brands/${product.brand.id}`}>
+              {product.brand.name}
+            </Link>
+          )}
+        />
+      </PermissionGuard>
       <SectionRow title={t("fields.material")} value={product.material} />
       <SectionRow
         title={t("fields.discountable")}

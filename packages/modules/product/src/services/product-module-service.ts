@@ -15,6 +15,7 @@ import {
 import { CreateProductOptionDTO } from "@medusajs/types"
 import {
   Product,
+  ProductBrand,
   ProductCategory,
   ProductCollection,
   ProductImage,
@@ -22,6 +23,7 @@ import {
   ProductOptionValue,
   ProductProductOption,
   ProductProductOptionValue,
+  ProductReview,
   ProductTag,
   ProductType,
   ProductVariant,
@@ -126,6 +128,12 @@ export default class ProductModuleService
     ProductProductOption: {
       dto: ProductTypes.ProductProductOptionDTO
     }
+    ProductBrand: {
+      dto: ProductTypes.ProductBrandDTO
+    }
+    ProductReview: {
+      dto: ProductTypes.ProductReviewDTO
+    }
   }>({
     Product,
     ProductCategory,
@@ -137,6 +145,8 @@ export default class ProductModuleService
     ProductVariant,
     ProductImage,
     ProductProductOption,
+    ProductBrand,
+    ProductReview,
   })
   implements ProductTypes.IProductModuleService
 {

@@ -115,7 +115,7 @@ describe("RolePermissionsSection", () => {
     expect(
       screen.getAllByText("roles.permissions.matrix.noViewAccess")
     ).toHaveLength(1)
-    expect(screen.getByText("3/36")).toBeTruthy()
+    expect(screen.getByText("3/44")).toBeTruthy()
   })
 
   it("lists resources the role has no access to as rows", () => {

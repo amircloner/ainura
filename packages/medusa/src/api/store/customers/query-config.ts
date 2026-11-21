@@ -1,3 +1,4 @@
+import { storeBrandProductFields } from "../brands/query-config"
 import {
   buildAllowedFields,
   prefixAllowedFields,
@@ -62,5 +63,43 @@ export const retrieveAddressTransformQueryConfig = {
 
 export const listAddressesTransformQueryConfig = {
   ...retrieveAddressTransformQueryConfig,
+  isList: true,
+}
+
+export const defaultStoreWishlistItemFields = [
+  "id",
+  "customer_id",
+  "product_id",
+  "variant_id",
+  "metadata",
+  "created_at",
+  "updated_at",
+]
+
+export const storeWishlistProductFields = [
+  ...storeBrandProductFields,
+  "metadata",
+]
+export const storeWishlistVariantFields = ["id", "title", "sku", "product_id"]
+
+const allowedStoreWishlistExtraFields = [
+  "product",
+  "variant",
+  ...prefixAllowedFields("product", storeWishlistProductFields),
+  ...prefixAllowedFields("variant", storeWishlistVariantFields),
+]
+
+export const retrieveWishlistTransformQueryConfig = {
+  defaults: defaultStoreWishlistItemFields,
+  allowed: buildAllowedFields(
+    defaultStoreWishlistItemFields,
+    allowedStoreWishlistExtraFields
+  ),
+  isList: false,
+}
+
+export const listWishlistTransformQueryConfig = {
+  ...retrieveWishlistTransformQueryConfig,
+  defaultLimit: 50,
   isList: true,
 }

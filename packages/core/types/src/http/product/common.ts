@@ -87,6 +87,18 @@ export interface BaseProduct {
    */
   collection_id: string | null
   /**
+   * The product's brand.
+   */
+  brand?: BaseProductBrand | null
+  /**
+   * The ID of the associated product brand.
+   */
+  brand_id?: string | null
+  /**
+   * The product's reviews.
+   */
+  reviews?: BaseProductReview[] | null
+  /**
    * The product's categories.
    */
   categories?: BaseProductCategory[] | null
@@ -454,6 +466,10 @@ export interface BaseProductListParams
    */
   collection_id?: string | string[]
   /**
+   * Filter by the product's brand(s).
+   */
+  brand_id?: string | string[]
+  /**
    * Apply filers on the product's creation date.
    */
   created_at?: OperatorMap<string>
@@ -566,4 +582,38 @@ export interface BaseProductVariantParams
    * Apply filters on the variant's deletion date.
    */
   deleted_at?: OperatorMap<string>
+}
+
+export interface BaseProductBrand {
+  id: string
+  name: string
+  handle: string
+  logo_url?: string | null
+  banner_url?: string | null
+  description?: string | null
+  is_featured: boolean
+  country?: string | null
+  metadata?: Record<string, unknown> | null
+  created_at: string
+  updated_at: string
+  deleted_at?: string | null
+}
+
+export interface BaseProductReview {
+  id: string
+  product_id: string
+  customer_id?: string | null
+  customer_name: string
+  rating: number
+  title?: string | null
+  content: string
+  pros?: string[] | null
+  cons?: string[] | null
+  is_recommended: boolean
+  verified_purchase: boolean
+  status: "pending" | "approved" | "rejected"
+  metadata?: Record<string, unknown> | null
+  created_at: string
+  updated_at: string
+  deleted_at?: string | null
 }

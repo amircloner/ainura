@@ -5,9 +5,14 @@ import * as zod from "zod"
 import { HttpTypes } from "@medusajs/types"
 import { Form } from "../../../../../components/common/form"
 import { SwitchBox } from "../../../../../components/common/switch-box"
+import { Combobox } from "../../../../../components/inputs/combobox"
 import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
 import { useExtendableForm } from "../../../../../dashboard-app/forms/hooks"
+import { brandsQueryKeys } from "../../../../../hooks/api/brands"
 import { useUpdateProduct } from "../../../../../hooks/api/products"
+import { useComboboxData } from "../../../../../hooks/use-combobox-data"
+import { useResourcePermissions } from "../../../../../hooks/use-resource-permissions"
+import { sdk } from "../../../../../lib/client"
 import { transformNullableFormData } from "../../../../../lib/form-helpers"
 
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
@@ -27,12 +32,16 @@ const EditProductSchema = zod.object({
   material: zod.string().optional(),
   description: zod.string().optional(),
   discountable: zod.boolean(),
+  brand_id: zod.string().optional(),
 })
 
 export const EditProductForm = ({ product }: EditProductFormProps) => {
   const { t } = useTranslation()
   const { handleSuccess } = useRouteModal()
   const direction = useDocumentDirection()
+  const { canRead: canReadBrands, isLoading: isLoadingBrandPermissions } =
+    useResourcePermissions("product_brand")
+  const canSelectBrand = !isLoadingBrandPermissions && canReadBrands
   const { getFormFields, getFormConfigs } = useExtension()
   const fields = getFormFields("product", "edit")
   const configs = getFormConfigs("product", "edit")
@@ -46,16 +55,27 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
       handle: product.handle || "",
       description: product.description || "",
       discountable: product.discountable,
+      brand_id: product.brand_id ?? "",
     },
     schema: EditProductSchema,
     configs: configs,
     data: product,
   })
 
+  const selectedBrand = form.watch("brand_id")
+  const brands = useComboboxData({
+    queryKey: brandsQueryKeys.lists(),
+    queryFn: (params) => sdk.admin.brand.list(params),
+    getOptions: ({ brands }) =>
+      brands.map(({ id, name }) => ({ value: id, label: name })),
+    selectedValue: selectedBrand,
+    enabled: canSelectBrand,
+  })
+
   const { mutateAsync, isPending } = useUpdateProduct(product.id)
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    const { title, discountable, handle, status, ...optional } = data
+    const { title, discountable, handle, status, brand_id, ...optional } = data
 
     const nullableData = transformNullableFormData(optional)
 
@@ -66,6 +86,9 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
         handle,
         status: status as HttpTypes.AdminProductStatus,
         ...nullableData,
+        ...(canSelectBrand && form.getFieldState("brand_id").isDirty
+          ? { brand_id: brand_id || null }
+          : {}),
       },
       {
         onSuccess: ({ product }) => {
@@ -201,6 +224,40 @@ export const EditProductForm = ({ product }: EditProductFormProps) => {
                   )
                 }}
               />
+              {canSelectBrand && (
+                <Form.Field
+                  control={form.control}
+                  name="brand_id"
+                  render={({ field }) => (
+                    <Form.Item>
+                      <Form.Label optional>{t("brands.singular")}</Form.Label>
+                      <Form.Control>
+                        <Combobox
+                          {...field}
+                          value={field.value ?? ""}
+                          onChange={(value) => field.onChange(value || "")}
+                          options={brands.options}
+                          searchValue={brands.searchValue}
+                          onSearchValueChange={brands.onSearchValueChange}
+                          fetchNextPage={brands.fetchNextPage}
+                          placeholder={t("brands.select")}
+                          allowClear
+                        />
+                      </Form.Control>
+                      {brands.isError && (
+                        <Text
+                          role="alert"
+                          size="small"
+                          className="text-ui-fg-error"
+                        >
+                          {t("brands.loadError")}
+                        </Text>
+                      )}
+                      <Form.ErrorMessage />
+                    </Form.Item>
+                  )}
+                />
+              )}
               <Form.Field
                 control={form.control}
                 name="description"

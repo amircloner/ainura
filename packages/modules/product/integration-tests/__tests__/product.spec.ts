@@ -55,7 +55,7 @@ moduleIntegrationTestRunner<Service>({
         service: ProductModuleService,
       }).linkable
 
-      expect(Object.keys(linkable)).toHaveLength(9)
+      expect(Object.keys(linkable)).toHaveLength(11)
       expect(Object.keys(linkable)).toEqual(
         expect.arrayContaining([
           "product",
@@ -67,6 +67,8 @@ moduleIntegrationTestRunner<Service>({
           "productCollection",
           "productCategory",
           "productImage",
+          "productBrand",
+          "productReview",
         ])
       )
 
@@ -163,7 +165,60 @@ moduleIntegrationTestRunner<Service>({
             serviceName: "product",
           },
         },
+        productBrand: {
+          id: {
+            entity: "ProductBrand",
+            field: "productBrand",
+            linkable: "product_brand_id",
+            primaryKey: "id",
+            serviceName: "product",
+          },
+        },
+        productReview: {
+          id: {
+            entity: "ProductReview",
+            field: "productReview",
+            linkable: "product_review_id",
+            primaryKey: "id",
+            serviceName: "product",
+          },
+        },
       })
+    })
+
+    it("loads brand and review relations and cascades product deletion to reviews", async () => {
+      const brand = await moduleService.createProductBrands({
+        name: "Studio",
+        handle: "studio",
+      })
+      const product = await moduleService.createProducts({
+        title: "Wool Coat",
+        brand_id: brand.id,
+      })
+      const reviewData = {
+        product_id: product.id,
+        customer_name: "Jane",
+        rating: 5,
+        content: "Warm and well made",
+        pros: ["Warm"],
+      }
+      const review = await moduleService.createProductReviews(reviewData)
+      const [result] = await moduleService.listProducts(
+        { brand_id: [brand.id] },
+        { relations: ["brand", "reviews"] }
+      )
+      expect(result).toMatchObject({
+        id: product.id,
+        brand: { id: brand.id },
+        reviews: [{ id: review.id, pros: ["Warm"], status: "approved" }],
+      })
+      await expect(
+        moduleService.createProductReviews({ ...reviewData, rating: 6 })
+      ).rejects.toThrow(/product_review_rating_check/)
+      await moduleService.updateProducts(product.id, { brand_id: null })
+      expect(await moduleService.listProducts({ brand_id: brand.id })).toEqual([])
+      await moduleService.deleteProducts([product.id])
+      expect(await moduleService.listProductReviews({ id: review.id })).toEqual([])
     })
 
     describe("Product Service", () => {

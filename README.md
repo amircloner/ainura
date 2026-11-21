@@ -48,12 +48,28 @@ npx create-medusa-app@latest my-medusa-store
 
 This sets up the Medusa server and admin dashboard, and optionally the Next.js Starter Storefront. See the [installation guide](https://docs.medusajs.com/learn/installation) for all options, or [install with Docker](https://docs.medusajs.com/learn/installation/docker).
 
+### Ainura storefront
+
+```bash
+yarn install
+yarn workspace @medusajs/types build
+yarn workspace @medusajs/js-sdk build
+yarn workspace @ainura/storefront dev
+```
+
+Open `http://localhost:8000`. Without a backend, Ainura uses the built-in Persian catalog and an isolated demo checkout that never places a real order.
+
+For live commerce, apply the Medusa database migrations, configure a publishable key for the catalog's sales channel, and allow the storefront origin in `STORE_CORS` and `AUTH_CORS`. Set `NEXT_PUBLIC_MEDUSA_BACKEND_URL` and `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` in `apps/storefront/.env.local`. Optionally set `NEXT_PUBLIC_MEDUSA_REGION_ID` and `NEXT_PUBLIC_FREE_SHIPPING_THRESHOLD` (in the region's API currency units). Checkout supports Medusa's manual system payment provider; online gateways need their own payment UI.
+
+From a Medusa application using the built packages in this repository, run `yarn medusa exec /absolute/path/to/ainura/scripts/seed-fashion.ts` to load the sample catalog into a development database. To add labeled fictional reviews, prefix the command with `NODE_ENV=development AINURA_SEED_DEMO_REVIEWS=1`. Configure shipping options and the system payment provider separately for live checkout.
+
 ## Repository structure
 
 This is a Yarn workspaces monorepo. Every Medusa package published to npm lives under [`packages`](./packages).
 
 | Path | Contents |
 | --- | --- |
+| [`apps/storefront`](./apps/storefront) | Ainura Persian RTL storefront (Next.js). |
 | [`packages/medusa`](./packages/medusa) | `@medusajs/medusa`: the main package installed in Medusa applications. Holds the Store and Admin API routes, CLI commands, subscribers, and jobs, and re-exports the modules and `@medusajs/core-flows`. |
 | [`packages/core/*`](./packages/core) | Core libraries: the framework runtime (`framework`), types, utils, Workflows SDK, Modules SDK, predefined workflows (`core-flows`), Query, orchestration, and the JS SDK. |
 | [`packages/modules/*`](./packages/modules) | Commerce Modules (product, cart, order, pricing, payment, and more) and Infrastructure Modules (event bus, caching, file, locking, workflow engine, and more). |

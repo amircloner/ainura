@@ -49,6 +49,7 @@
 - Module service interfaces and DTOs for every commerce and infrastructure module.
 - `HttpTypes` namespace with Store and Admin API request and response types, also used by `@medusajs/js-sdk`.
 - Namespaced groups such as `CartTypes`, `ProductTypes`, `OrderTypes`, `DAL`, and `WorkflowTypes`.
+- Shared contracts for product brands, review moderation and statistics, customer wishlist items, and optional fashion metadata (`ProductFashionMetadata`).
 - `MedusaContainer`, `ConfigModule`, and other framework-level types.
 
 ## Usage

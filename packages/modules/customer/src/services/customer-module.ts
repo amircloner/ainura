@@ -5,6 +5,7 @@ import {
   CustomerGroupCustomerDTO,
   CustomerGroupDTO,
   CustomerTypes,
+  CustomerWishlistItemDTO,
   DAL,
   ICustomerModuleService,
   InferEntityType,
@@ -26,6 +27,7 @@ import {
   CustomerAddress,
   CustomerGroup,
   CustomerGroupCustomer,
+  CustomerWishlistItem,
 } from "@models"
 import { joinerConfig } from "../joiner-config"
 
@@ -35,6 +37,7 @@ type InjectedDependencies = {
   customerAddressService: ModulesSdkTypes.IMedusaInternalService<any>
   customerGroupService: ModulesSdkTypes.IMedusaInternalService<any>
   customerGroupCustomerService: ModulesSdkTypes.IMedusaInternalService<any>
+  customerWishlistItemService: ModulesSdkTypes.IMedusaInternalService<any>
 }
 
 export default class CustomerModuleService
@@ -43,11 +46,13 @@ export default class CustomerModuleService
     Customer: { dto: CustomerDTO }
     CustomerGroup: { dto: CustomerGroupDTO }
     CustomerGroupCustomer: { dto: CustomerGroupCustomerDTO }
+    CustomerWishlistItem: { dto: CustomerWishlistItemDTO }
   }>({
     CustomerAddress,
     Customer,
     CustomerGroup,
     CustomerGroupCustomer,
+    CustomerWishlistItem,
   })
   implements ICustomerModuleService
 {

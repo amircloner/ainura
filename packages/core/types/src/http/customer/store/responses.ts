@@ -1,5 +1,5 @@
-import { DeleteResponseWithParent, PaginatedResponse } from "../../common"
-import { StoreCustomer, StoreCustomerAddress } from "./entities"
+import { DeleteResponse, DeleteResponseWithParent, PaginatedResponse } from "../../common"
+import { StoreCustomer, StoreCustomerAddress, StoreWishlistItem } from "./entities"
 
 export interface StoreCustomerResponse {
   /**
@@ -27,3 +27,14 @@ export type StoreCustomerAddressDeleteResponse = DeleteResponseWithParent<
   "address",
   StoreCustomer
 >
+
+export interface StoreWishlistItemResponse {
+  wishlist_item: StoreWishlistItem
+}
+
+export type StoreWishlistItemListResponse = PaginatedResponse<{
+  wishlist_items: StoreWishlistItem[]
+}>
+
+export interface StoreWishlistItemDeleteResponse
+  extends DeleteResponse<"wishlist_item"> {}

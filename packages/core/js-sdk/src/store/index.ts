@@ -1915,4 +1915,154 @@ export class Store {
       )
     },
   }
+
+  /**
+   * @tags product
+   */
+  public brand = {
+    /**
+     * List product brands in the storefront.
+     *
+     * @example
+     * sdk.store.brand.list()
+     */
+    list: async (
+      query?: FindParams & HttpTypes.StoreBrandListParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreBrandListResponse>(
+        `/store/brands`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+    /**
+     * Retrieve a product brand by its ID.
+     *
+     * @example
+     * sdk.store.brand.retrieve("pbrand_123")
+     */
+    retrieve: async (
+      id: string,
+      query?: SelectParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreBrandResponse>(
+        `/store/brands/${id}`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+  }
+
+  /**
+   * @tags product
+   */
+  public review = {
+    /**
+     * List approved product reviews and rating stats for a product.
+     *
+     * @example
+     * sdk.store.review.list("prod_123")
+     */
+    list: async (
+      productId: string,
+      query?: FindParams & HttpTypes.StoreProductReviewListParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreProductReviewListResponse>(
+        `/store/products/${productId}/reviews`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+    /**
+     * Submit a review for a product.
+     *
+     * @example
+     * sdk.store.review.create("prod_123", { rating: 5, content: "Great quality" })
+     */
+    create: async (
+      productId: string,
+      body: HttpTypes.StoreCreateProductReview,
+      query?: SelectParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreProductReviewResponse>(
+        `/store/products/${productId}/reviews`,
+        {
+          method: "POST",
+          body,
+          query,
+          headers,
+        }
+      )
+    },
+  }
+
+  /**
+   * @tags customer
+   */
+  public wishlist = {
+    /**
+     * List the authenticated customer's wishlist items.
+     *
+     * @example
+     * sdk.store.wishlist.list()
+     */
+    list: async (
+      query?: HttpTypes.StoreWishlistItemListParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreWishlistItemListResponse>(
+        `/store/customers/me/wishlist`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+    /**
+     * Add a product to the authenticated customer's wishlist.
+     *
+     * @example
+     * sdk.store.wishlist.create({ product_id: "prod_123" })
+     */
+    create: async (
+      body: HttpTypes.StoreCreateWishlistItem,
+      query?: SelectParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreWishlistItemResponse>(
+        `/store/customers/me/wishlist`,
+        {
+          method: "POST",
+          body,
+          query,
+          headers,
+        }
+      )
+    },
+    /**
+     * Remove an item from the authenticated customer's wishlist.
+     *
+     * @example
+     * sdk.store.wishlist.delete("cwish_123")
+     */
+    delete: async (id: string, headers?: ClientHeaders) => {
+      return this.client.fetch<HttpTypes.StoreWishlistItemDeleteResponse>(
+        `/store/customers/me/wishlist/${id}`,
+        {
+          method: "DELETE",
+          headers,
+        }
+      )
+    },
+  }
 }

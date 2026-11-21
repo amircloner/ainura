@@ -79,6 +79,9 @@ import { adminSearchRoutesMiddlewares } from "./admin/search/middlewares"
 import { setSecretApiKeyContext } from "@medusajs/framework"
 import { adminLocalesRoutesMiddlewares } from "./admin/locales/middlewares"
 import { adminTranslationsRoutesMiddlewares } from "./admin/translations/middlewares"
+import { adminBrandRoutesMiddlewares } from "./admin/brands/middlewares"
+import { adminReviewRoutesMiddlewares } from "./admin/reviews/middlewares"
+import { storeBrandRoutesMiddlewares } from "./store/brands/middlewares"
 
 export default defineMiddlewares([
   ...storeRoutesMiddlewares,
@@ -164,4 +167,7 @@ export default defineMiddlewares([
   ...adminSearchIndexRoutesMiddlewares,
   ...adminSearchRoutesMiddlewares,
   ...cloudRoutesMiddlewares,
+  ...storeBrandRoutesMiddlewares,
+  ...adminBrandRoutesMiddlewares,
+  ...adminReviewRoutesMiddlewares,
 ])

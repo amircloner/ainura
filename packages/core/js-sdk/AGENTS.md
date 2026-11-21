@@ -23,7 +23,7 @@ const { cart } = await sdk.store.cart.create({ region_id: "reg_123" })
 - `Config` options (`src/types.ts`): `baseUrl`, `publishableKey`, `apiKey`, `globalHeaders`, `auth.type` (`"jwt" | "session"`), `auth.jwtTokenStorageKey` (default `medusa_auth_token`), `auth.jwtTokenStorageMethod` (`"local" | "session" | "memory" | "custom" | "nostore"`), `auth.storage` (custom storage with `getItem`/`setItem`/`removeItem`, sync or async), `auth.fetchCredentials`, `logger`, `debug`.
 - `publishableKey` is sent as `x-publishable-api-key` on every request; store routes require it.
 - `apiKey` (admin secret API key) is sent as `Authorization: Basic base64(apiKey + ":")`. Server-side only; never ship it to a browser.
-- Namespaces: `sdk.store.*` (`region`, `collection`, `category`, `productOption`, `product`, `cart`, `fulfillment`, `payment`, `order`, `customer`, `locale`), `sdk.admin.*` (one class per resource in `src/admin/`, e.g. `sdk.admin.product`, `sdk.admin.order`), `sdk.auth.*`.
+- Store catalog extensions: `sdk.store.brand`, `sdk.store.review`, and `sdk.store.wishlist`. Review creation and wishlist operations require a customer session or token. Admin management uses `sdk.admin.brand` and `sdk.admin.review`.
 
 ### Auth
 
@@ -48,9 +48,7 @@ await sdk.auth.logout()
 ### Custom routes
 
 ```ts
-const data = await sdk.client.fetch<{ brands: Brand[] }>("/store/brands", {
-  method: "POST",
-  body: { name: "Acme" },
+const data = await sdk.client.fetch<{ articles: Article[] }>("/store/articles", {
   query: { fields: "id,name" },
 })
 ```

@@ -9,9 +9,11 @@ import { AdminShippingProfile } from "../../shipping-profile"
 import { AdminTranslation } from "../../translation"
 import {
   BaseProduct,
+  BaseProductBrand,
   BaseProductImage,
   BaseProductOption,
   BaseProductOptionValue,
+  BaseProductReview,
   BaseProductVariant,
   ProductStatus,
 } from "../common"
@@ -93,8 +95,12 @@ export interface AdminProductOptionValue extends BaseProductOptionValue {
 }
 export interface AdminProduct extends Omit<
   BaseProduct,
-  "categories" | "variants"
+  "categories" | "variants" | "brand" | "reviews"
 > {
+  /** The product's brand. */
+  brand?: AdminBrand | null
+  /** The product's reviews, including their moderation status. */
+  reviews?: AdminProductReview[]
   /**
    * The product's collection.
    */
@@ -144,4 +150,12 @@ export interface AdminProductVariantInventoryLink {
   Inventory: {
     inventory_item_id: string
   }
+}
+
+export interface AdminBrand extends BaseProductBrand {
+  products?: AdminProduct[]
+}
+
+export interface AdminProductReview extends BaseProductReview {
+  product?: AdminProduct
 }

@@ -1,10 +1,30 @@
-import { SelectParams } from "../../common"
+import { FindParams, SelectParams } from "../../common"
+import { BaseFilterable } from "../../../dal"
 import {
   BaseProductListParams,
   BaseProductOptionListParams,
   BaseProductOptionParams,
   BaseProductVariantParams,
 } from "../common"
+
+export interface StoreBrandListParams
+  extends FindParams,
+    BaseFilterable<StoreBrandListParams> {
+  q?: string
+  id?: string | string[]
+  handle?: string | string[]
+  name?: string | string[]
+  is_featured?: boolean
+  country?: string | string[]
+}
+
+export interface StoreProductReviewListParams
+  extends FindParams,
+    BaseFilterable<StoreProductReviewListParams> {
+  rating?: number | number[]
+  is_recommended?: boolean
+  verified_purchase?: boolean
+}
 
 export interface StoreProductOptionListParams
   extends BaseProductOptionListParams {}

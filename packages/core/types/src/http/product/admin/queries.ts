@@ -177,3 +177,31 @@ export interface AdminProductOptionListParams
   extends BaseProductOptionListParams {}
 
 export interface AdminGetProductParams extends SelectParams {}
+
+export interface AdminBrandListParams
+  extends FindParams,
+    BaseFilterable<AdminBrandListParams> {
+  q?: string
+  id?: string | string[]
+  name?: string | string[]
+  handle?: string | string[]
+  is_featured?: boolean
+  country?: string | string[]
+  created_at?: OperatorMap<string>
+  updated_at?: OperatorMap<string>
+}
+
+export interface AdminProductReviewListParams
+  extends FindParams,
+    BaseFilterable<AdminProductReviewListParams> {
+  q?: string
+  id?: string | string[]
+  product_id?: string | string[]
+  customer_id?: string | string[]
+  rating?: number | number[]
+  status?: ("pending" | "approved" | "rejected") | ("pending" | "approved" | "rejected")[]
+  is_recommended?: boolean
+  verified_purchase?: boolean
+  created_at?: OperatorMap<string>
+  updated_at?: OperatorMap<string>
+}

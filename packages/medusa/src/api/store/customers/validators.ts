@@ -60,3 +60,18 @@ export type StoreCreateCustomerAddressType = z.infer<
 export type StoreUpdateCustomerAddressType = z.infer<
   typeof StoreUpdateCustomerAddress
 >
+
+export const StoreGetWishlistParams = createFindParams({
+  offset: 0,
+  limit: 50,
+})
+
+export const StoreCreateWishlistItem = z.object({
+  product_id: z.string().min(1),
+  variant_id: z.string().min(1).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
+})
+
+export type StoreCreateWishlistItemType = z.infer<
+  typeof StoreCreateWishlistItem
+>

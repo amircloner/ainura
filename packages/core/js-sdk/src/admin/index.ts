@@ -55,6 +55,8 @@ import { Translation } from "./translation.js"
 import { ProductOption } from "./product-option.js"
 import { RbacRole } from "./rbac-role.js"
 import { RbacPolicy } from "./rbac-policy.js"
+import { Brand } from "./brand.js"
+import { Review } from "./review.js"
 
 /**
  * The admin client provides access to admin-related resources.
@@ -290,6 +292,14 @@ export class Admin {
    * @since 2.15.5
    */
   public rbacPolicy: RbacPolicy
+  /**
+   * @tags product
+   */
+  public brand: Brand
+  /**
+   * @tags product
+   */
+  public review: Review
 
   constructor(client: Client) {
     this.invite = new Invite(client)
@@ -348,5 +358,7 @@ export class Admin {
     this.layouts = new Layouts(client)
     this.rbacRole = new RbacRole(client)
     this.rbacPolicy = new RbacPolicy(client)
+    this.brand = new Brand(client)
+    this.review = new Review(client)
   }
 }

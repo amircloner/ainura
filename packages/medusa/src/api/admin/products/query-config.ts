@@ -75,6 +75,7 @@ export const defaultAdminProductFields = [
   "discountable",
   "thumbnail",
   "collection_id",
+  "brand_id",
   "type_id",
   "weight",
   "length",

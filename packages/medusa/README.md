@@ -51,6 +51,7 @@
 - **CLI commands**: implementations of `develop`, `start`, `build`, `exec`, `user`, `lint`, `db:*`, and `plugin:*`, run through the `medusa` binary from `@medusajs/cli`.
 - **Default modules**: re-exports every official module and provider (Cart, Product, Order, Payment, Auth, File, Event Bus, Workflow Engine, and more) at `@medusajs/medusa/<name>`, so they need no separate install.
 - **Workflows**: re-exports `@medusajs/core-flows` at `@medusajs/medusa/core-flows`.
+- **Fashion commerce**: Store APIs expose brands, approved product reviews with rating summaries, and account wishlists. Review submissions require a customer account and are pending until approved in the Admin API. Expanded catalog data is scoped to published products in the publishable key's sales channels.
 
 ## Installation
 

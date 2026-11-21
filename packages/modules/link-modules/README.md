@@ -49,6 +49,8 @@ Link Modules for Medusa: creates and manages the tables that store module links,
 
 No installation needed. The package ships with `@medusajs/medusa`.
 
+The built-in wishlist link exposes `product` and `variant` on `customer_wishlist_item` through Query. It is read-only and has no link table.
+
 ## Usage
 
 Define a link in your application, then run `npx medusa db:migrate` to create its table:
