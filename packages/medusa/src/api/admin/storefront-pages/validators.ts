@@ -88,7 +88,7 @@ export const AdminCreateStorefrontPage = z.object({
   subtitle: z.string().nullish(),
   page_type: StorefrontPageTypeEnum.optional().default("landing"),
   is_active: z.boolean().optional().default(true),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export const AdminUpdateStorefrontPage = z.object({
@@ -97,7 +97,7 @@ export const AdminUpdateStorefrontPage = z.object({
   subtitle: z.string().nullish(),
   page_type: StorefrontPageTypeEnum.optional(),
   is_active: z.boolean().optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export const AdminCreateStorefrontSection = z.object({
@@ -107,7 +107,7 @@ export const AdminCreateStorefrontSection = z.object({
   rank: z.number().int().min(0).optional(),
   is_active: z.boolean().optional().default(true),
   config: SectionConfigSchema.optional().default({}),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export const AdminUpdateStorefrontSection = z.object({
@@ -117,7 +117,7 @@ export const AdminUpdateStorefrontSection = z.object({
   rank: z.number().int().min(0).optional(),
   is_active: z.boolean().optional(),
   config: SectionConfigSchema.optional(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export const AdminReorderStorefrontSections = z.object({
@@ -141,7 +141,7 @@ export const AdminUpsertStorefrontColor = z.object({
   hex_code: z
     .string()
     .regex(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, "Invalid hex color code"),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 })
 
 export type AdminCreateStorefrontPageType = z.infer<

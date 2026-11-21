@@ -1,8 +1,8 @@
 import { MedusaResponse } from "@medusajs/framework/http"
 import { HttpTypes, StoreTypes } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
-import { RequestWithContext } from "../products/helpers"
-import { hydrateStorefrontSections } from "./helpers"
+import type { RequestWithContext } from "../../products/helpers"
+import { hydrateStorefrontSections } from "../helpers"
 
 export const GET = async (
   req: RequestWithContext<HttpTypes.StoreStorefrontPageParams>,

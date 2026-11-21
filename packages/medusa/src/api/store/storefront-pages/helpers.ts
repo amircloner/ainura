@@ -57,7 +57,7 @@ function productPriceStats(product: HttpTypes.StoreProduct) {
 }
 
 async function fetchVisibleProductsForRequest(
-  req: RequestWithContext,
+  req: RequestWithContext<HttpTypes.StoreStorefrontPageParams>,
   extraFilters: Record<string, unknown>,
   take: number
 ): Promise<HttpTypes.StoreProduct[]> {
@@ -109,7 +109,7 @@ async function fetchVisibleProductsForRequest(
 }
 
 async function resolveProductSource(
-  req: RequestWithContext,
+  req: RequestWithContext<HttpTypes.StoreStorefrontPageParams>,
   source?: StoreTypes.StorefrontProductSource
 ): Promise<HttpTypes.StoreProduct[]> {
   if (!source) return []
@@ -191,7 +191,7 @@ async function resolveProductSource(
 }
 
 export async function hydrateStorefrontSections(
-  req: RequestWithContext,
+  req: RequestWithContext<HttpTypes.StoreStorefrontPageParams>,
   sections: StoreTypes.StorefrontSectionDTO[]
 ): Promise<HttpTypes.StoreStorefrontSection[]> {
   const activeOrdered = sections

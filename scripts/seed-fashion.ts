@@ -38,7 +38,10 @@ import type {
 
 const FIXTURE_PATH = "./fixtures/digistyle-fixture.ts"
 
-const CURRENCY = "irr"
+const CURRENCY = process.env.FASHION_SEED_CURRENCY ?? "irr"
+if (CURRENCY !== "irr" && CURRENCY !== "irt") {
+  throw new Error("FASHION_SEED_CURRENCY must be irr or irt")
+}
 const FIXTURE = "digistyle-catalog"
 const SALE_LIST = "Digistyle sale prices"
 const LOCATION = "Digistyle main warehouse"
@@ -158,8 +161,8 @@ function safeHandle(raw: string, fallback: string): string {
   return fallback
 }
 
-function rial(toman: number) {
-  const amount = Math.round(toman * 10)
+function priceAmount(toman: number) {
+  const amount = Math.round(toman * (CURRENCY === "irr" ? 10 : 1))
   if (!Number.isSafeInteger(amount) || amount < 0) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,
@@ -195,7 +198,7 @@ async function ensureStoreSetup(container: MedusaContainer) {
         input: {
           regions: [
             {
-              name: "Iran (IRR)",
+              name: `Iran (${CURRENCY.toUpperCase()})`,
               currency_code: CURRENCY,
               countries: ["ir"],
               automatic_taxes: false,
@@ -452,7 +455,7 @@ export default async function seedFashion({ container }: ExecArgs) {
         prices: [
           {
             currency_code: CURRENCY,
-            amount: rial(Math.max(variant.originalPrice, variant.price, 0)),
+            amount: priceAmount(Math.max(variant.originalPrice, variant.price, 0)),
           },
         ],
       })),
@@ -541,7 +544,7 @@ export default async function seedFashion({ container }: ExecArgs) {
 
       const discounts = [...byVariantId].flatMap(([id, v]) =>
         v.price > 0 && v.price < v.originalPrice
-          ? [{ variant_id: id, currency_code: CURRENCY, amount: rial(v.price) }]
+          ? [{ variant_id: id, currency_code: CURRENCY, amount: priceAmount(v.price) }]
           : []
       )
       if (discounts.length) {

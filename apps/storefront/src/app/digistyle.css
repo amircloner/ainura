@@ -1272,6 +1272,7 @@
 
 /* ===== DIGISTYLE FOOTER ===== */
 .ds-footer {
+  margin-block-start: auto;
   border-top: 1px solid var(--ds-neutral-100);
   background: #fff;
   padding: 36px 80px 40px;
