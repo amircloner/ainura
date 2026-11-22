@@ -1,5 +1,45 @@
 @layer base {
   @font-face {
+    font-display: swap;
+    font-family: "IRANYekan";
+    font-style: normal;
+    font-weight: 300;
+    src: url("./assets/fonts/iranyekanweblight.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-display: swap;
+    font-family: "IRANYekan";
+    font-style: normal;
+    font-weight: 400;
+    src: url("./assets/fonts/iranyekanwebregular.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-display: swap;
+    font-family: "IRANYekan";
+    font-style: normal;
+    font-weight: 500;
+    src: url("./assets/fonts/iranyekanwebmedium.woff") format("woff");
+  }
+
+  @font-face {
+    font-display: swap;
+    font-family: "IRANYekan";
+    font-style: normal;
+    font-weight: 700;
+    src: url("./assets/fonts/iranyekanwebbold.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-display: swap;
+    font-family: "IRANYekan";
+    font-style: normal;
+    font-weight: 800;
+    src: url("./assets/fonts/iranyekanwebextrabold.woff") format("woff");
+  }
+
+  @font-face {
     font-family: "Inter";
     font-weight: 400;
     src: url("./assets/fonts/Inter-Regular.ttf") format("truetype");
@@ -26,6 +66,7 @@
   :root {
     background-color: var(--bg-subtle);
     color: var(--fg-base);
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;

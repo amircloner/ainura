@@ -115,8 +115,17 @@ export function generateThemeCSS() {
         "var(--tw-duration, var(--default-transition-duration))",
     })}\n}`,
     ...Object.entries(typography as Record<string, Declarations>).map(
-      ([selector, values]) =>
-        `@utility ${selector.replace(/^\./, "")} {\n${declarations(values)}\n}`
+      ([selector, values]) => {
+        const nextValues =
+          typeof values.fontFamily === "string" &&
+          values.fontFamily.startsWith("Inter,")
+            ? { ...values, fontFamily: `"IRANYekan", ${values.fontFamily}` }
+            : values
+
+        return `@utility ${selector.replace(/^\./, "")} {\n${declarations(
+          nextValues
+        )}\n}`
+      }
     ),
   ]
 

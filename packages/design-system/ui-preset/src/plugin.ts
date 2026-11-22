@@ -41,7 +41,16 @@ export default plugin(
       })
     }
 
-    addComponents(typography)
+    const resolvedTypography = Object.fromEntries(
+      Object.entries(typography).map(([selector, values]) => [
+        selector,
+        values.fontFamily.startsWith("Inter,")
+          ? { ...values, fontFamily: `"IRANYekan", ${values.fontFamily}` }
+          : values,
+      ])
+    )
+
+    addComponents(resolvedTypography)
 
     addBase({
       ":root": { ...colors.light, ...effects.light },
