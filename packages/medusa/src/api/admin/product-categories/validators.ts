@@ -20,11 +20,24 @@ export const AdminProductCategoryParams = createSelectParams().merge(
   })
 )
 
+const ProductCategoryDisplayTypeSchema = z.enum([
+  "default",
+  "products",
+  "subcategories",
+  "both",
+])
+
 export const AdminProductCategoriesParamsFields = z.object({
   q: z.string().optional(),
   id: z.union([z.string(), z.array(z.string())]).optional(),
   description: z.union([z.string(), z.array(z.string())]).optional(),
   handle: z.union([z.string(), z.array(z.string())]).optional(),
+  display_type: z
+    .union([
+      ProductCategoryDisplayTypeSchema,
+      z.array(ProductCategoryDisplayTypeSchema),
+    ])
+    .optional(),
   parent_category_id: z.union([z.string(), z.array(z.string())]).optional(),
   external_id: z.union([z.string(), z.array(z.string()), z.null()]).optional(),
   include_ancestors_tree: booleanString().optional(),
@@ -51,6 +64,8 @@ export const CreateProductCategory = z
     name: z.string(),
     description: z.string().optional(),
     handle: z.string().optional(),
+    thumbnail: z.string().nullish(),
+    display_type: ProductCategoryDisplayTypeSchema.optional(),
     is_internal: z.boolean().optional(),
     is_active: z.boolean().optional(),
     parent_category_id: z.string().nullish(),
@@ -73,6 +88,8 @@ export const UpdateProductCategory = z
     name: z.string().optional(),
     description: z.string().optional(),
     handle: z.string().optional(),
+    thumbnail: z.string().nullish(),
+    display_type: ProductCategoryDisplayTypeSchema.optional(),
     is_internal: z.boolean().optional(),
     is_active: z.boolean().optional(),
     parent_category_id: z.string().nullish(),

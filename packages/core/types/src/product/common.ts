@@ -8,6 +8,15 @@ import { OperatorMap } from "../dal/utils"
 export type ProductStatus = "draft" | "proposed" | "published" | "rejected"
 
 /**
+ * @enum
+ */
+export type ProductCategoryDisplayType =
+  | "default"
+  | "products"
+  | "subcategories"
+  | "both"
+
+/**
  * @interface
  *
  * A product's data.
@@ -315,6 +324,14 @@ export interface ProductCategoryDTO {
    */
   handle: string
   /**
+   * The URL of the product category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
+  /**
    * Whether the product category is active.
    */
   is_active: boolean
@@ -389,6 +406,14 @@ export interface CreateProductCategoryDTO {
    */
   handle?: string
   /**
+   * The URL of the product category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
+  /**
    * Whether the product category is active.
    */
   is_active?: boolean
@@ -440,6 +465,14 @@ export interface UpdateProductCategoryDTO {
    */
   handle?: string
   /**
+   * The URL of the product category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
+  /**
    * Whether the product category is active.
    */
   is_active?: boolean
@@ -479,6 +512,14 @@ export interface ProductTagDTO {
    * The value of the product tag.
    */
   value: string
+  /**
+   * The unique URL slug/handle of the product tag.
+   */
+  handle?: string | null
+  /**
+   * The description of the product tag.
+   */
+  description?: string
   /**
    * Holds custom data in key-value pairs.
    */
@@ -878,6 +919,10 @@ export interface FilterableProductTagProps
    * The value to filter product tags by.
    */
   value?: string | string[]
+  /**
+   * The handle to filter product tags by.
+   */
+  handle?: string | string[]
 }
 
 /**
@@ -1085,6 +1130,10 @@ export interface FilterableProductCategoryProps
    */
   handle?: string | string[]
   /**
+   * Filter product categories by display type.
+   */
+  display_type?: ProductCategoryDisplayType | ProductCategoryDisplayType[]
+  /**
    * Filter product categories by whether they're active.
    */
   is_active?: boolean
@@ -1278,6 +1327,22 @@ export interface CreateProductTagDTO {
    * The value of the product tag.
    */
   value: string
+  /**
+   * The unique URL slug/handle of the product tag.
+   */
+  handle?: string | null
+  /**
+   * The description of the product tag.
+   */
+  description?: string
+  /**
+   * An external identifier for the product tag.
+   */
+  external_id?: string | null
+  /**
+   * Holds custom data in key-value pairs.
+   */
+  metadata?: MetadataType
 }
 
 /**
@@ -1304,6 +1369,22 @@ export interface UpdateProductTagDTO {
    * The value of the product tag.
    */
   value?: string
+  /**
+   * The unique URL slug/handle of the product tag.
+   */
+  handle?: string | null
+  /**
+   * The description of the product tag.
+   */
+  description?: string
+  /**
+   * An external identifier for the product tag.
+   */
+  external_id?: string | null
+  /**
+   * Holds custom data in key-value pairs.
+   */
+  metadata?: MetadataType
 }
 
 /**

@@ -117,6 +117,11 @@ vi.mock("../../../../../hooks/api/product-types", () => ({
 
 vi.mock("../../../../../hooks/api/tags", () => ({
   productTagsQueryKeys: { lists: () => ["product_tags"] },
+  useCreateProductTag: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}))
+
+vi.mock("../../../common/components/quick-create-category", () => ({
+  QuickCreateCategory: () => null,
 }))
 
 vi.mock("../../../../../hooks/use-combobox-data", () => ({

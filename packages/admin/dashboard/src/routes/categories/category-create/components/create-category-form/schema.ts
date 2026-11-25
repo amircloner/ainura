@@ -4,6 +4,8 @@ export const CreateCategoryDetailsSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   handle: z.string().optional(),
+  thumbnail: z.string().optional(),
+  display_type: z.enum(["default", "products", "subcategories", "both"]),
   status: z.enum(["active", "inactive"]),
   visibility: z.enum(["public", "internal"]),
 })

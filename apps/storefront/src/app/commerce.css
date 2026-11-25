@@ -206,3 +206,123 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.store-subcategories-section {
+  margin-bottom: 24px;
+}
+.store-subcategories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 14px;
+}
+.store-subcategory-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e5e3df;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+}
+.store-subcategory-card:hover {
+  border-color: #111;
+}
+.store-subcategory-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  text-decoration: none;
+}
+.store-subcategory-thumb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border: 1px solid #eceae6;
+  background: #f6f5f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-weight: 700;
+}
+.store-subcategory-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.store-subcategory-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.store-subcategory-info strong {
+  font-size: 0.92rem;
+}
+.store-subcategory-info small {
+  color: #6b6863;
+  font-size: 0.78rem;
+}
+.store-subcategory-children {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #f0eeea;
+}
+.store-subcategory-children a {
+  font-size: 0.78rem;
+  color: #4b4945;
+  text-decoration: none;
+}
+.store-subcategory-children a:hover {
+  color: #111;
+  text-decoration: underline;
+}
+.store-filter-tags,
+.store-tag-cloud,
+.ds-pdp-taxonomy-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.store-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid #dedbd6;
+  background: #fafafa;
+  color: #222;
+  font-size: 0.8rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.store-tag-pill:hover,
+.store-tag-pill[aria-pressed="true"] {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+.ds-pdp-taxonomy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eceae6;
+  font-size: 0.82rem;
+}
+.ds-pdp-taxonomy-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.ds-pdp-taxonomy-row > span {
+  color: #6b6863;
+  font-weight: 600;
+}

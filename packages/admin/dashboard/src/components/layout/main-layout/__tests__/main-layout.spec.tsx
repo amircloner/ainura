@@ -139,6 +139,7 @@ describe("MainLayout", () => {
     expect(nav["/products"]).toEqual([
       "/collections",
       "/categories",
+      "/settings/product-tags",
       "/product-options",
       "/bundles",
     ])

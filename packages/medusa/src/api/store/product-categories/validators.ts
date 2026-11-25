@@ -19,12 +19,25 @@ export const StoreProductCategoryParams = createSelectParams().merge(
   })
 )
 
+const ProductCategoryDisplayTypeSchema = z.enum([
+  "default",
+  "products",
+  "subcategories",
+  "both",
+])
+
 export const StoreProductCategoriesParamsFields = z.object({
   q: z.string().optional(),
   id: z.union([z.string(), z.array(z.string())]).optional(),
   name: z.union([z.string(), z.array(z.string())]).optional(),
   description: z.union([z.string(), z.array(z.string())]).optional(),
   handle: z.union([z.string(), z.array(z.string())]).optional(),
+  display_type: z
+    .union([
+      ProductCategoryDisplayTypeSchema,
+      z.array(ProductCategoryDisplayTypeSchema),
+    ])
+    .optional(),
   parent_category_id: z.union([z.string(), z.array(z.string())]).optional(),
   external_id: z.union([z.string(), z.array(z.string()), z.null()]).optional(),
   include_ancestors_tree: booleanString().optional(),

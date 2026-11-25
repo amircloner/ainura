@@ -1,6 +1,6 @@
 import { GlobeEurope, PencilSquare, Trash } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
-import { Container, Heading } from "@medusajs/ui"
+import { Container, Heading, Text } from "@medusajs/ui"
 import { useTranslation } from "react-i18next"
 import {
   ActionGroup,
@@ -65,12 +65,30 @@ export const ProductTagGeneralSection = ({
   }
 
   return (
-    <Container className="flex items-center justify-between">
-      <div className="flex items-center gap-x-1.5">
-        <span className="h1-core text-ui-fg-muted">#</span>
-        <Heading>{productTag.value}</Heading>
+    <Container className="divide-y p-0">
+      <div className="flex items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-x-1.5">
+          <span className="h1-core text-ui-fg-muted">#</span>
+          <Heading>{productTag.value}</Heading>
+        </div>
+        {groups.length > 0 && <ActionMenu groups={groups} />}
       </div>
-      {groups.length > 0 && <ActionMenu groups={groups} />}
+      <div className="grid grid-cols-2 gap-3 px-6 py-4 text-ui-fg-subtle">
+        <Text size="small" leading="compact" weight="plus">
+          {t("productTags.fields.handle")}
+        </Text>
+        <Text size="small" leading="compact">
+          {productTag.handle ? `/${productTag.handle}` : "-"}
+        </Text>
+      </div>
+      <div className="grid grid-cols-2 gap-3 px-6 py-4 text-ui-fg-subtle">
+        <Text size="small" leading="compact" weight="plus">
+          {t("productTags.fields.description")}
+        </Text>
+        <Text size="small" leading="compact">
+          {productTag.description || "-"}
+        </Text>
+      </div>
     </Container>
   )
 }

@@ -359,6 +359,64 @@ export class Store {
 
   /**
    * @tags product
+   */
+  public productTag = {
+    /**
+     * This method retrieves a paginated list of product tags.
+     *
+     * @param query - Filters and pagination configurations.
+     * @param headers - Headers to pass in the request.
+     * @returns The paginated list of product tags.
+     *
+     * @example
+     * sdk.store.productTag.list()
+     * .then(({ product_tags, count }) => {
+     *   console.log(product_tags)
+     * })
+     */
+    list: async (
+      query?: FindParams & HttpTypes.StoreProductTagListParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreProductTagListResponse>(
+        `/store/product-tags`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+    /**
+     * This method retrieves a product tag by its ID.
+     *
+     * @param id - The ID of the product tag to retrieve.
+     * @param query - Configure the fields to retrieve in the product tag.
+     * @param headers - Headers to pass in the request.
+     * @returns The product tag.
+     *
+     * @example
+     * sdk.store.productTag.retrieve("ptag_123")
+     * .then(({ product_tag }) => {
+     *   console.log(product_tag)
+     * })
+     */
+    retrieve: async (
+      id: string,
+      query?: HttpTypes.StoreProductTagParams,
+      headers?: ClientHeaders
+    ) => {
+      return this.client.fetch<HttpTypes.StoreProductTagResponse>(
+        `/store/product-tags/${id}`,
+        {
+          query,
+          headers,
+        }
+      )
+    },
+  }
+
+  /**
+   * @tags product
    * @since 2.16.0
    */
   public productOption = {

@@ -84,15 +84,49 @@ export const useCategoryTableColumns = () => {
                   </IconButton>
                 ) : null}
               </div>
+              {row.original.thumbnail && (
+                <img
+                  src={row.original.thumbnail}
+                  alt=""
+                  className="border-ui-border-base size-6 shrink-0 rounded object-cover border"
+                />
+              )}
               <span className="truncate">{getValue()}</span>
             </div>
           )
+        },
+      }),
+      columnHelper.accessor("description", {
+        header: () => <TextHeader text={t("fields.description")} />,
+        cell: ({ getValue }) => {
+          return <TextCell text={getValue() || "-"} />
         },
       }),
       columnHelper.accessor("handle", {
         header: () => <TextHeader text={t("fields.handle")} />,
         cell: ({ getValue }) => {
           return <TextCell text={`/${getValue()}`} />
+        },
+      }),
+      columnHelper.accessor("display_type", {
+        header: () => (
+          <TextHeader text={t("categories.fields.displayType.label")} />
+        ),
+        cell: ({ getValue }) => {
+          return (
+            <TextCell
+              text={t(`categories.fields.displayType.${getValue() || "default"}`)}
+            />
+          )
+        },
+      }),
+      columnHelper.display({
+        id: "products_count",
+        header: () => (
+          <TextHeader text={t("categories.fields.productsCount.label")} />
+        ),
+        cell: ({ row }) => {
+          return <TextCell text={String(row.original.products?.length ?? 0)} />
         },
       }),
       columnHelper.accessor("is_active", {

@@ -20,6 +20,16 @@ export const useProductTagTableColumns = () => {
         header: () => t("fields.value"),
         cell: ({ getValue }) => <TextCell text={getValue()} />,
       }),
+      columnHelper.accessor("handle", {
+        header: () => t("productTags.fields.handle"),
+        cell: ({ getValue }) => (
+          <TextCell text={getValue() ? `/${getValue()}` : "-"} />
+        ),
+      }),
+      columnHelper.accessor("description", {
+        header: () => t("productTags.fields.description"),
+        cell: ({ getValue }) => <TextCell text={getValue() || "-"} />,
+      }),
       columnHelper.accessor("created_at", {
         header: () => t("fields.createdAt"),
 

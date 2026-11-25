@@ -3797,9 +3797,106 @@
               },
               "required": ["label"],
               "additionalProperties": false
+            },
+            "parent": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "none": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "none"],
+              "additionalProperties": false
+            },
+            "thumbnail": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "upload": {
+                  "type": "string"
+                },
+                "remove": {
+                  "type": "string"
+                },
+                "urlPlaceholder": {
+                  "type": "string"
+                }
+              },
+              "required": ["label", "upload", "remove", "urlPlaceholder"],
+              "additionalProperties": false
+            },
+            "displayType": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "default": {
+                  "type": "string"
+                },
+                "products": {
+                  "type": "string"
+                },
+                "subcategories": {
+                  "type": "string"
+                },
+                "both": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "default",
+                "products",
+                "subcategories",
+                "both"
+              ],
+              "additionalProperties": false
+            },
+            "productsCount": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": ["label"],
+              "additionalProperties": false
+            },
+            "quickCreate": {
+              "type": "object",
+              "properties": {
+                "toggle": {
+                  "type": "string"
+                },
+                "namePlaceholder": {
+                  "type": "string"
+                },
+                "add": {
+                  "type": "string"
+                }
+              },
+              "required": ["toggle", "namePlaceholder", "add"],
+              "additionalProperties": false
             }
           },
-          "required": ["visibility", "status", "path", "children", "new"],
+          "required": [
+            "visibility",
+            "status",
+            "path",
+            "children",
+            "new",
+            "parent",
+            "thumbnail",
+            "displayType",
+            "productsCount",
+            "quickCreate"
+          ],
           "additionalProperties": false
         }
       },
@@ -14426,9 +14523,15 @@
           "properties": {
             "value": {
               "type": "string"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
             }
           },
-          "required": ["value"],
+          "required": ["value", "handle", "description"],
           "additionalProperties": false
         }
       },

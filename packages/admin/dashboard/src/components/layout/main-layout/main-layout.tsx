@@ -207,6 +207,7 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
   const { canRead: canReadProductCollections } =
     useProductCollectionPermissions()
   const { canRead: canReadProductCategories } = useProductCategoryPermissions()
+  const { canRead: canReadProductTags } = useResourcePermissions("product_tag")
   const { canRead: canReadProductOptions } =
     useResourcePermissions("product_option")
   const { canRead: canReadBrands } = useResourcePermissions("product_brand")
@@ -244,6 +245,14 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
                     {
                       label: t("categories.domain"),
                       to: "/categories",
+                    },
+                  ]
+                : []),
+              ...(canReadProductTags
+                ? [
+                    {
+                      label: t("productTags.domain"),
+                      to: "/settings/product-tags",
                     },
                   ]
                 : []),

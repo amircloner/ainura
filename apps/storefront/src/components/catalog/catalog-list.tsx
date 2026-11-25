@@ -12,7 +12,9 @@ import {
   colorHex,
   matchesText,
   normalizeText,
+  productCategories,
   SORTS,
+  tagsFrom,
   type Category,
 } from "./catalog"
 import { ProductCard } from "./product-card"
@@ -28,6 +30,7 @@ const SIZES = [
 const FACETS = [
   "q",
   "category",
+  "tag",
   "brand",
   "size",
   "color",
@@ -41,11 +44,13 @@ const sizeLabel = (size: string) =>
 
 function CategoryTree({
   categories,
+  counts,
   selected,
   toggle,
   parent,
 }: {
   categories: Category[]
+  counts: Map<string, number>
   selected: string[]
   toggle: (value: string) => void
   parent?: string
@@ -62,13 +67,17 @@ function CategoryTree({
                 checked={selected.includes(category.handle)}
                 onChange={() => toggle(category.handle)}
               />
-              {category.name}
+              <span>{category.name}</span>
+              <small className="store-muted">
+                ({number(counts.get(category.handle) ?? 0)})
+              </small>
             </label>
             {categories.some(
               (child) => child.parent?.handle === category.handle
             ) && (
               <CategoryTree
                 categories={categories}
+                counts={counts}
                 parent={category.handle}
                 selected={selected}
                 toggle={toggle}
@@ -88,6 +97,13 @@ export function CatalogList({ products }: { products: CatalogProduct[] }) {
   const [mobileFilters, setMobileFilters] = useState(false)
   const [brandSearch, setBrandSearch] = useState("")
   const categories = categoriesFrom(products)
+  const categoryCounts = new Map<string, number>()
+  for (const product of products) {
+    for (const cat of productCategories(product)) {
+      categoryCounts.set(cat.handle, (categoryCounts.get(cat.handle) ?? 0) + 1)
+    }
+  }
+  const tags = tagsFrom(products)
   const brands = [
     ...new Map(
       products.flatMap(({ brand }) =>
@@ -133,6 +149,11 @@ export function CatalogList({ products }: { products: CatalogProduct[] }) {
       label:
         categories.find((category) => category.handle === value)?.name ?? value,
     })),
+    ...filters.tags.map((value) => ({
+      key: "tag",
+      value,
+      label: `#${tags.find((tag) => tag.handle === value || tag.value === value)?.value ?? value}`,
+    })),
     ...filters.brands.map((value) => ({
       key: "brand",
       value,
@@ -176,9 +197,33 @@ export function CatalogList({ products }: { products: CatalogProduct[] }) {
           <summary>دسته‌بندی</summary>
           <CategoryTree
             categories={categories}
+            counts={categoryCounts}
             selected={filters.categories}
             toggle={(value) => toggle("category", value)}
           />
+        </details>
+      )}
+      {tags.length > 0 && (
+        <details open>
+          <summary>برچسب‌ها</summary>
+          <div className="store-filter-tags">
+            {tags.map((tag) => {
+              const active =
+                filters.tags.includes(tag.handle) ||
+                filters.tags.includes(tag.value)
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  className="store-tag-pill"
+                  aria-pressed={active}
+                  onClick={() => toggle("tag", tag.handle)}
+                >
+                  #{tag.value}
+                </button>
+              )
+            })}
+          </div>
         </details>
       )}
       {brands.length > 0 && (

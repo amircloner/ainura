@@ -101,6 +101,32 @@ export const CategoryGeneralSection = ({
           /{category.handle}
         </Text>
       </div>
+      <div className="grid grid-cols-2 gap-3 px-6 py-4 text-ui-fg-subtle">
+        <Text size="small" leading="compact" weight="plus">
+          {t("categories.fields.displayType.label")}
+        </Text>
+        <Text size="small" leading="compact">
+          {t(
+            `categories.fields.displayType.${category.display_type || "default"}`
+          )}
+        </Text>
+      </div>
+      <div className="grid grid-cols-2 items-center gap-3 px-6 py-4 text-ui-fg-subtle">
+        <Text size="small" leading="compact" weight="plus">
+          {t("categories.fields.thumbnail.label")}
+        </Text>
+        {category.thumbnail ? (
+          <img
+            src={category.thumbnail}
+            alt={category.name}
+            className="border-ui-border-base size-12 rounded-md border object-cover"
+          />
+        ) : (
+          <Text size="small" leading="compact">
+            -
+          </Text>
+        )}
+      </div>
     </Container>
   )
 }

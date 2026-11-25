@@ -15,6 +15,7 @@ export const AdminGetProductTagsParamsFields = z.object({
   q: z.string().optional(),
   id: z.union([z.string(), z.array(z.string())]).optional(),
   value: z.union([z.string(), z.array(z.string())]).optional(),
+  handle: z.union([z.string(), z.array(z.string())]).optional(),
   external_id: z.union([z.string(), z.array(z.string())]).optional(),
   created_at: createOperatorMap().optional(),
   updated_at: createOperatorMap().optional(),
@@ -35,6 +36,8 @@ export type AdminCreateProductTagType = z.infer<typeof AdminCreateProductTag>
 export const AdminCreateProductTag = z
   .object({
     value: z.string(),
+    handle: z.string().nullish(),
+    description: z.string().optional(),
     external_id: z.string().nullish(),
     metadata: z.record(z.string(), z.unknown()).nullish(),
   })
@@ -44,6 +47,8 @@ export type AdminUpdateProductTagType = z.infer<typeof AdminUpdateProductTag>
 export const AdminUpdateProductTag = z
   .object({
     value: z.string().optional(),
+    handle: z.string().nullish(),
+    description: z.string().optional(),
     external_id: z.string().nullish(),
     metadata: z.record(z.string(), z.unknown()).nullish(),
   })

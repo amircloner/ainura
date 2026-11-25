@@ -14,6 +14,14 @@ export interface BaseProductTag {
    */
   value: string
   /**
+   * The tag's unique URL slug/handle.
+   */
+  handle?: string | null
+  /**
+   * The tag's description.
+   */
+  description?: string
+  /**
    * The date the tag was created.
    */
   created_at: string
@@ -53,6 +61,10 @@ export interface BaseProductTagListParams extends FindParams {
    * Filter by value(s).
    */
   value?: string | string[]
+  /**
+   * Filter by handle(s).
+   */
+  handle?: string | string[]
   /**
    * Filter by external ID(s).
    *

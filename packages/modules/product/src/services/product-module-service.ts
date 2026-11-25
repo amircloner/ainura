@@ -878,7 +878,10 @@ export default class ProductModuleService
     data: ProductTypes.CreateProductTagDTO[] | ProductTypes.CreateProductTagDTO,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<ProductTypes.ProductTagDTO[] | ProductTypes.ProductTagDTO> {
-    const input = Array.isArray(data) ? data : [data]
+    const input = (Array.isArray(data) ? data : [data]).map((tag) => ({
+      ...tag,
+      handle: this.normalizeTagHandle_(tag.handle, tag.value),
+    }))
 
     const tags = await this.productTagService_.create(input, sharedContext)
 
@@ -887,6 +890,18 @@ export default class ProductModuleService
     >(tags)
 
     return Array.isArray(data) ? createdTags : createdTags[0]
+  }
+
+  protected normalizeTagHandle_(
+    raw?: string | null,
+    fallback?: string
+  ): string | null {
+    const source = raw?.trim() || fallback?.trim() || ""
+    if (!source) {
+      return null
+    }
+    const slug = kebabCase(source).replace(/-+/g, "-").replace(/^-|-$/g, "")
+    return slug || source
   }
 
   async upsertProductTags(
@@ -919,10 +934,19 @@ export default class ProductModuleService
     @MedusaContext() sharedContext: Context = {}
   ): Promise<InferEntityType<typeof ProductTag>[]> {
     const input = Array.isArray(data) ? data : [data]
-    const forUpdate = input.filter((tag): tag is UpdateTagInput => !!tag.id)
-    const forCreate = input.filter(
-      (tag): tag is ProductTypes.CreateProductTagDTO => !tag.id
-    )
+    const forUpdate = input
+      .filter((tag): tag is UpdateTagInput => !!tag.id)
+      .map((tag) =>
+        isDefined(tag.handle)
+          ? { ...tag, handle: this.normalizeTagHandle_(tag.handle) }
+          : tag
+      )
+    const forCreate = input
+      .filter((tag): tag is ProductTypes.CreateProductTagDTO => !tag.id)
+      .map((tag) => ({
+        ...tag,
+        handle: this.normalizeTagHandle_(tag.handle, tag.value),
+      }))
 
     let created: InferEntityType<typeof ProductTag>[] = []
     let updated: InferEntityType<typeof ProductTag>[] = []
@@ -958,11 +982,14 @@ export default class ProductModuleService
     data: ProductTypes.UpdateProductTagDTO,
     @MedusaContext() sharedContext: Context = {}
   ): Promise<ProductTypes.ProductTagDTO[] | ProductTypes.ProductTagDTO> {
+    const normalizedData = isDefined(data.handle)
+      ? { ...data, handle: this.normalizeTagHandle_(data.handle) }
+      : data
     let normalizedInput: UpdateTagInput[] = []
     if (isString(idOrSelector)) {
       // Check if the tag exists in the first place
       await this.productTagService_.retrieve(idOrSelector, {}, sharedContext)
-      normalizedInput = [{ id: idOrSelector, ...data }]
+      normalizedInput = [{ id: idOrSelector, ...normalizedData }]
     } else {
       const tags = await this.productTagService_.list(
         idOrSelector,
@@ -972,7 +999,7 @@ export default class ProductModuleService
 
       normalizedInput = tags.map((tag) => ({
         id: tag.id,
-        ...data,
+        ...normalizedData,
       }))
     }
 

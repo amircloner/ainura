@@ -76,6 +76,7 @@ export const ProductTagListTable = () => {
         pagination
         orderBy={[
           { key: "value", label: t("fields.value") },
+          { key: "handle", label: t("productTags.fields.handle") },
           { key: "created_at", label: t("fields.createdAt") },
           { key: "updated_at", label: t("fields.updatedAt") },
         ]}

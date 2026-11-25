@@ -10,6 +10,8 @@ import {
 export const defaults = [
   "id",
   "value",
+  "handle",
+  "description",
   "external_id",
   "created_at",
   "updated_at",

@@ -1,4 +1,4 @@
-import { Button, Heading } from "@medusajs/ui"
+import { Button, Heading, toast } from "@medusajs/ui"
 import { UseFormReturn, useFieldArray } from "react-hook-form"
 import { Trans, useTranslation } from "react-i18next"
 
@@ -10,10 +10,14 @@ import { StackedFocusModal } from "../../../../../../../components/modals"
 import { useComboboxData } from "../../../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../../../lib/client"
 import { CategoryCombobox } from "../../../../../common/components/category-combobox"
+import { QuickCreateCategory } from "../../../../../common/components/quick-create-category"
 import { ProductCreateSchemaType } from "../../../../types"
 import { collectionsQueryKeys } from "../../../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../../../hooks/api/product-types"
-import { productTagsQueryKeys } from "../../../../../../../hooks/api/tags"
+import {
+  productTagsQueryKeys,
+  useCreateProductTag,
+} from "../../../../../../../hooks/api/tags"
 import { shippingProfileQueryKeys } from "../../../../../../../hooks/api/shipping-profiles"
 
 type ProductCreateOrganizationSectionProps = {
@@ -24,6 +28,7 @@ export const ProductCreateOrganizationSection = ({
   form,
 }: ProductCreateOrganizationSectionProps) => {
   const { t } = useTranslation()
+  const { mutateAsync: createTag } = useCreateProductTag()
 
   const collections = useComboboxData({
     queryKey: collectionsQueryKeys.lists(),
@@ -152,6 +157,16 @@ export const ProductCreateOrganizationSection = ({
                 <Form.Control>
                   <CategoryCombobox {...field} />
                 </Form.Control>
+                <QuickCreateCategory
+                  onCreated={(id) => {
+                    const current = form.getValues("categories") || []
+                    if (!current.includes(id)) {
+                      form.setValue("categories", [...current, id], {
+                        shouldDirty: true,
+                      })
+                    }
+                  }}
+                />
                 <Form.ErrorMessage />
               </Form.Item>
             )
@@ -169,10 +184,36 @@ export const ProductCreateOrganizationSection = ({
                 <Form.Control>
                   <Combobox
                     {...field}
+                    multiple
+                    displayMode="chips"
                     options={tags.options}
                     searchValue={tags.searchValue}
                     onSearchValueChange={tags.onSearchValueChange}
                     fetchNextPage={tags.fetchNextPage}
+                    onCreateOption={async (value) => {
+                      const trimmed = value.trim()
+                      if (!trimmed) {
+                        return
+                      }
+                      try {
+                        const { product_tag } = await createTag({
+                          value: trimmed,
+                        })
+                        const current = form.getValues("tags") || []
+                        if (!current.includes(product_tag.id)) {
+                          form.setValue("tags", [...current, product_tag.id], {
+                            shouldDirty: true,
+                          })
+                        }
+                        tags.onSearchValueChange("")
+                      } catch (error) {
+                        toast.error(
+                          error instanceof Error
+                            ? error.message
+                            : t("errors.serverError")
+                        )
+                      }
+                    }}
                   />
                 </Form.Control>
                 <Form.ErrorMessage />

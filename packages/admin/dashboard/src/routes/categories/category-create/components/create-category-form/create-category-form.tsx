@@ -40,6 +40,8 @@ export const CreateCategoryForm = ({
       name: "",
       description: "",
       handle: "",
+      thumbnail: "",
+      display_type: "default",
       status: "active",
       visibility: "public",
       rank: parentCategoryId ? 0 : null,
@@ -50,12 +52,22 @@ export const CreateCategoryForm = ({
 
   const handleTabChange = (tab: Tab) => {
     if (tab === Tab.ORGANIZE) {
-      const { name, handle, description, status, visibility } = form.getValues()
+      const {
+        name,
+        handle,
+        description,
+        thumbnail,
+        display_type,
+        status,
+        visibility,
+      } = form.getValues()
 
       const result = CreateCategoryDetailsSchema.safeParse({
         name,
         handle,
         description,
+        thumbnail,
+        display_type,
         status,
         visibility,
       })
@@ -81,7 +93,16 @@ export const CreateCategoryForm = ({
   const { mutateAsync, isPending } = useCreateProductCategory()
 
   const handleSubmit = form.handleSubmit((data) => {
-    const { visibility, status, parent_category_id, rank, name, ...rest } = data
+    const {
+      visibility,
+      status,
+      parent_category_id,
+      rank,
+      name,
+      thumbnail,
+      display_type,
+      ...rest
+    } = data
     const parsedData = transformNullableFormData(rest, false)
 
     setShouldFreeze(true)
@@ -90,6 +111,8 @@ export const CreateCategoryForm = ({
       {
         name: name,
         ...parsedData,
+        thumbnail: thumbnail?.trim() || null,
+        display_type,
         parent_category_id: parent_category_id ?? undefined,
         rank: rank ?? undefined,
         is_active: status === "active",

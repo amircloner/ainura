@@ -7,6 +7,7 @@ import type {
   CatalogCategory,
   CatalogProduct,
   CatalogReview,
+  CatalogTag,
   DynamicStorefrontPage,
   ReviewStats,
 } from "./seed-data"
@@ -44,8 +45,13 @@ type Category = HttpTypes.StoreProductCategory
 function categoryFrom(category?: Category | null, depth = 0): CatalogCategory {
   if (!category) return { handle: "all", name: "همه محصولات" }
   return {
+    id: category.id,
     handle: category.handle,
     name: category.name,
+    description: category.description || "",
+    thumbnail: category.thumbnail ?? null,
+    display_type: category.display_type ?? "default",
+    rank: category.rank ?? 0,
     parent:
       category.parent_category && depth < 4
         ? categoryFrom(category.parent_category, depth + 1)
@@ -54,22 +60,33 @@ function categoryFrom(category?: Category | null, depth = 0): CatalogCategory {
 }
 
 export const catalogFields =
-  "+metadata,+categories.id,+categories.handle,+categories.name,+categories.parent_category_id,+variants.calculated_price,+variants.inventory_quantity,+variants.options.option_id"
+  "+metadata,+categories.id,+categories.handle,+categories.name,+categories.description,+categories.thumbnail,+categories.display_type,+categories.parent_category_id,+tags.id,+tags.value,+tags.handle,+tags.description,+variants.calculated_price,+variants.inventory_quantity,+variants.options.option_id"
 
 export function toCatalogProduct(
   product: HttpTypes.StoreProduct,
   currency?: string
 ): CatalogProduct {
   const metadata: ProductFashionMetadata = product.metadata ?? {}
-  const category =
+  const categories = (product.categories ?? []).map((entry) =>
+    categoryFrom(entry)
+  )
+  const primaryCategory =
     product.categories?.find((entry) => entry.parent_category_id) ??
     product.categories?.[0]
+  const tags: CatalogTag[] = (product.tags ?? []).map((tag) => ({
+    id: tag.id,
+    value: tag.value,
+    handle: tag.handle || tag.value,
+    description: tag.description || "",
+  }))
   return {
     id: product.id,
     handle: product.handle,
     title: product.title,
     description: product.description ?? "",
-    category: categoryFrom(category),
+    category: categoryFrom(primaryCategory),
+    categories,
+    tags,
     brand: product.brand ?? null,
     images: [
       ...new Set(
@@ -130,7 +147,11 @@ const loadCatalog = cache(async () => {
     .fetch<HttpTypes.StoreProductCategoryListResponse>(
       "/store/product-categories",
       {
-        query: { limit: 100, fields: "id,handle,name,parent_category_id" },
+        query: {
+          limit: 200,
+          fields:
+            "id,handle,name,description,thumbnail,display_type,rank,parent_category_id",
+        },
         signal: AbortSignal.timeout(4000),
       }
     )
@@ -207,6 +228,61 @@ export const getBrands = cache(async (): Promise<CatalogBrand[]> => {
       }
     )
     return brands
+  } catch {
+    return []
+  }
+})
+
+export const getCategories = cache(async (): Promise<CatalogCategory[]> => {
+  if (!connected) return []
+  try {
+    const { product_categories } =
+      await sdk.client.fetch<HttpTypes.StoreProductCategoryListResponse>(
+        "/store/product-categories",
+        {
+          query: {
+            limit: 200,
+            fields:
+              "id,handle,name,description,thumbnail,display_type,rank,parent_category_id",
+          },
+          signal: AbortSignal.timeout(4000),
+        }
+      )
+    const byId = new Map(product_categories.map((entry) => [entry.id, entry]))
+    const withParents = (entry: Category, depth = 0): Category => {
+      const parent = byId.get(entry.parent_category_id ?? "")
+      return parent && depth < 4
+        ? { ...entry, parent_category: withParents(parent, depth + 1) }
+        : entry
+    }
+    return product_categories
+      .map((entry) => categoryFrom(withParents(entry)))
+      .sort((a, b) => (a.rank ?? 0) - (b.rank ?? 0))
+  } catch {
+    return []
+  }
+})
+
+export const getTags = cache(async (): Promise<CatalogTag[]> => {
+  if (!connected) return []
+  try {
+    const { product_tags } =
+      await sdk.client.fetch<HttpTypes.StoreProductTagListResponse>(
+        "/store/product-tags",
+        {
+          query: {
+            limit: 200,
+            fields: "id,value,handle,description",
+          },
+          signal: AbortSignal.timeout(4000),
+        }
+      )
+    return product_tags.map((tag) => ({
+      id: tag.id,
+      value: tag.value,
+      handle: tag.handle || tag.value,
+      description: tag.description || "",
+    }))
   } catch {
     return []
   }

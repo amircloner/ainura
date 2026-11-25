@@ -73,11 +73,20 @@ type ProductVariant {
   deleted_at: DateTime
 }
 
+enum ProductCategoryDisplayType {
+  default
+  products
+  subcategories
+  both
+}
+
 type ProductCategory {
   id: ID!
   name: String!
   description: String!
   handle: String!
+  thumbnail: String
+  display_type: ProductCategoryDisplayType!
   mpath: String!
   is_active: Boolean!
   is_internal: Boolean!
@@ -95,6 +104,8 @@ type ProductCategory {
 type ProductTag {
   id: ID!
   value: String!
+  handle: String
+  description: String!
   metadata: JSON
   products: [Product]
   created_at: DateTime!

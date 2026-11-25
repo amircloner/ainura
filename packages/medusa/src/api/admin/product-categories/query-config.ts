@@ -8,6 +8,8 @@ export const defaults = [
   "name",
   "description",
   "handle",
+  "thumbnail",
+  "display_type",
   "is_active",
   "is_internal",
   "rank",

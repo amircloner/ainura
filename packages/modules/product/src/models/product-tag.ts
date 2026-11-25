@@ -7,6 +7,8 @@ const ProductTag = model
     {
       id: model.id({ prefix: "ptag" }).primaryKey(),
       value: model.text().searchable().translatable(),
+      handle: model.text().searchable().nullable(),
+      description: model.text().searchable().translatable().default(""),
       external_id: model.text().nullable(),
       metadata: model.json().nullable(),
       products: model.manyToMany(() => Product, {
@@ -18,6 +20,12 @@ const ProductTag = model
     {
       name: "IDX_tag_value_unique",
       on: ["value"],
+      unique: true,
+      where: "deleted_at IS NULL",
+    },
+    {
+      name: "IDX_tag_handle_unique",
+      on: ["handle"],
       unique: true,
       where: "deleted_at IS NULL",
     },

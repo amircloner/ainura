@@ -1,4 +1,5 @@
 import { BaseFilterable, OperatorMap } from "../../dal"
+import { ProductCategoryDisplayType } from "../../product/common"
 import { FindParams, SelectParams } from "../common"
 import { BaseProduct } from "../product/common"
 
@@ -20,6 +21,14 @@ export interface BaseProductCategory {
    * human-readable URLs.
    */
   handle: string
+  /**
+   * The URL of the category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
   /**
    * Whether the category is active.
    */
@@ -96,6 +105,10 @@ export interface BaseProductCategoryListParams
    * Filter by the category's handle(s).
    */
   handle?: string | string[]
+  /**
+   * Filter by display type(s).
+   */
+  display_type?: ProductCategoryDisplayType | ProductCategoryDisplayType[]
   /**
    * Filter by the category's external ID(s).
    */

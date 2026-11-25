@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 import { Form } from "../../../../../components/common/form"
 import { HandleInput } from "../../../../../components/inputs/handle-input"
 import { useDocumentDirection } from "../../../../../hooks/use-document-direction"
+import { CategoryThumbnailInput } from "../../../common/components/category-thumbnail-input"
 import { CreateCategorySchema } from "./schema"
 
 type CreateCategoryDetailsProps = {
@@ -130,6 +131,61 @@ export const CreateCategoryDetails = ({ form }: CreateCategoryDetailsProps) => {
             }}
           />
         </div>
+        <Form.Field
+          control={form.control}
+          name="display_type"
+          render={({ field: { ref, onChange, ...field } }) => {
+            return (
+              <Form.Item>
+                <Form.Label>
+                  {t("categories.fields.displayType.label")}
+                </Form.Label>
+                <Form.Control>
+                  <Select dir={direction} {...field} onValueChange={onChange}>
+                    <Select.Trigger ref={ref}>
+                      <Select.Value />
+                    </Select.Trigger>
+                    <Select.Content>
+                      <Select.Item value="default">
+                        {t("categories.fields.displayType.default")}
+                      </Select.Item>
+                      <Select.Item value="products">
+                        {t("categories.fields.displayType.products")}
+                      </Select.Item>
+                      <Select.Item value="subcategories">
+                        {t("categories.fields.displayType.subcategories")}
+                      </Select.Item>
+                      <Select.Item value="both">
+                        {t("categories.fields.displayType.both")}
+                      </Select.Item>
+                    </Select.Content>
+                  </Select>
+                </Form.Control>
+                <Form.ErrorMessage />
+              </Form.Item>
+            )
+          }}
+        />
+        <Form.Field
+          control={form.control}
+          name="thumbnail"
+          render={({ field }) => {
+            return (
+              <Form.Item>
+                <Form.Label optional>
+                  {t("categories.fields.thumbnail.label")}
+                </Form.Label>
+                <Form.Control>
+                  <CategoryThumbnailInput
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </Form.Control>
+                <Form.ErrorMessage />
+              </Form.Item>
+            )
+          }}
+        />
       </div>
     </div>
   )

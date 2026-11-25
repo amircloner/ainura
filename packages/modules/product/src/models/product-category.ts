@@ -7,6 +7,10 @@ const ProductCategory = model
     name: model.text().searchable().translatable(),
     description: model.text().searchable().translatable().default(""),
     handle: model.text().searchable(),
+    thumbnail: model.text().nullable(),
+    display_type: model
+      .enum(["default", "products", "subcategories", "both"])
+      .default("default"),
     mpath: model.text(),
     is_active: model.boolean().default(false),
     is_internal: model.boolean().default(false),

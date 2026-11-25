@@ -1,6 +1,7 @@
-import type { CatalogProduct } from "@/lib/medusa"
+import type { CatalogProduct, CatalogTag } from "@/lib/medusa"
 
 export type Category = NonNullable<CatalogProduct["category"]>
+export type Tag = CatalogTag
 
 export const SORTS = [
   ["popular", "پربازدیدترین"],
@@ -44,14 +45,37 @@ export function categoryTrail(category: CatalogProduct["category"]) {
   return trail
 }
 
+export function productCategories(product: CatalogProduct): Category[] {
+  const assigned = product.categories?.length
+    ? product.categories
+    : [product.category]
+  return [
+    ...new Map(
+      assigned
+        .flatMap((category) => categoryTrail(category))
+        .map((category) => [category.handle, category])
+    ).values(),
+  ]
+}
+
 export function categoriesFrom(products: CatalogProduct[]) {
   return [
     ...new Map(
       products
-        .flatMap((product) => categoryTrail(product.category))
+        .flatMap((product) => productCategories(product))
         .map((category) => [category.handle, category])
     ).values(),
   ]
+}
+
+export function tagsFrom(products: CatalogProduct[]): Tag[] {
+  return [
+    ...new Map(
+      products
+        .flatMap((product) => product.tags ?? [])
+        .map((tag) => [tag.handle, tag])
+    ).values(),
+  ].sort((a, b) => a.value.localeCompare(b.value, "fa"))
 }
 
 export function matchesProduct(product: CatalogProduct, query: string) {
@@ -62,10 +86,11 @@ export function matchesProduct(product: CatalogProduct, query: string) {
     product.brand?.handle,
     product.handle,
     product.metadata?.product_code,
-    ...categoryTrail(product.category).flatMap((category) => [
+    ...productCategories(product).flatMap((category) => [
       category.name,
       category.handle,
-    ])
+    ]),
+    ...(product.tags ?? []).flatMap((tag) => [tag.value, tag.handle])
   )
 }
 
@@ -111,6 +136,7 @@ export function catalogQuery(params: Pick<URLSearchParams, "get" | "getAll">) {
   return {
     q: params.get("q")?.trim() ?? "",
     categories: values("category"),
+    tags: values("tag"),
     brands: values("brand"),
     sizes: values("size"),
     colors: values("color"),
@@ -141,8 +167,14 @@ export function catalogResults(
       (filters.brands.length &&
         (!product.brand || !filters.brands.includes(product.brand.handle))) ||
       (filters.categories.length &&
-        !categoryTrail(product.category).some((category) =>
+        !productCategories(product).some((category) =>
           filters.categories.includes(category.handle)
+        )) ||
+      (filters.tags.length &&
+        !(product.tags ?? []).some(
+          (tag) =>
+            filters.tags.includes(tag.handle) ||
+            filters.tags.includes(tag.value)
         ))
     )
       return []

@@ -1,3 +1,5 @@
+import { ProductCategoryDisplayType } from "../../../product/common"
+
 export interface AdminCreateProductCategory {
   /**
    * The product category's name.
@@ -12,6 +14,14 @@ export interface AdminCreateProductCategory {
    * human-readable URLs.
    */
   handle?: string
+  /**
+   * The URL of the category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
   /**
    * Whether the category is only available and viewable by
    * admin users.
@@ -54,6 +64,14 @@ export interface AdminUpdateProductCategory {
    * human-readable URLs.
    */
   handle?: string
+  /**
+   * The URL of the category's thumbnail image.
+   */
+  thumbnail?: string | null
+  /**
+   * How the category archive page should display content.
+   */
+  display_type?: ProductCategoryDisplayType
   /**
    * Whether the category is only available and viewable by
    * admin users.

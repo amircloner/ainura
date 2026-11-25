@@ -47,6 +47,7 @@ export function createProductTagTableAdapter({
       const ALLOWED_FILTERS = [
         "id",
         "value",
+        "handle",
         "external_id",
         "created_at",
         "updated_at",

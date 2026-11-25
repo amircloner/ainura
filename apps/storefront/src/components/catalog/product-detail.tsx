@@ -483,6 +483,44 @@ export function ProductDetail({
           )}
 
           {message && <p role="alert">{message}</p>}
+
+          {((product.categories?.length ?? 0) > 0 ||
+            (product.tags?.length ?? 0) > 0) && (
+            <div className="ds-pdp-taxonomy">
+              {(product.categories?.length ?? 0) > 0 && (
+                <div className="ds-pdp-taxonomy-row">
+                  <span>دسته‌بندی‌ها:</span>
+                  <div className="ds-pdp-taxonomy-links">
+                    {product.categories!.map((cat) => (
+                      <Link
+                        key={cat.handle}
+                        href={`/categories/${encodeURIComponent(cat.handle)}`}
+                        className="store-tag-pill"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {(product.tags?.length ?? 0) > 0 && (
+                <div className="ds-pdp-taxonomy-row">
+                  <span>برچسب‌ها:</span>
+                  <div className="ds-pdp-taxonomy-links">
+                    {product.tags!.map((tag) => (
+                      <Link
+                        key={tag.id}
+                        href={`/tags/${encodeURIComponent(tag.handle)}`}
+                        className="store-tag-pill"
+                      >
+                        #{tag.value}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 

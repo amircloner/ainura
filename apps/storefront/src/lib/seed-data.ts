@@ -1,4 +1,8 @@
-import type { HttpTypes, ProductFashionMetadata } from "@medusajs/types"
+import type {
+  HttpTypes,
+  ProductCategoryDisplayType,
+  ProductFashionMetadata,
+} from "@medusajs/types"
 
 export type CatalogBrand = Pick<
   HttpTypes.StoreBrand,
@@ -13,9 +17,21 @@ export type CatalogBrand = Pick<
 >
 
 export type CatalogCategory = {
+  id?: string
   handle: string
   name: string
+  description?: string
+  thumbnail?: string | null
+  display_type?: ProductCategoryDisplayType
+  rank?: number | null
   parent?: CatalogCategory
+}
+
+export type CatalogTag = {
+  id: string
+  value: string
+  handle: string
+  description?: string
 }
 
 export type CatalogReview = Pick<
@@ -49,6 +65,8 @@ export type CatalogProduct = {
   title: string
   description: string
   category: CatalogCategory
+  categories?: CatalogCategory[]
+  tags?: CatalogTag[]
   brand: CatalogBrand | null
   images: string[]
   variants: CatalogVariant[]

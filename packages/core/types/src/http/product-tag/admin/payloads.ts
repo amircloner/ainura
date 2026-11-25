@@ -7,6 +7,14 @@ export interface AdminCreateProductTag {
    */
   value: string
   /**
+   * The tag's unique URL slug/handle. Auto-generated from value if omitted.
+   */
+  handle?: string | null
+  /**
+   * The tag's description.
+   */
+  description?: string
+  /**
    * An external ID for the tag.
    *
    * @since 2.13.7
@@ -26,6 +34,14 @@ export interface AdminUpdateProductTag {
    * The tag's value.
    */
   value?: string
+  /**
+   * The tag's unique URL slug/handle.
+   */
+  handle?: string | null
+  /**
+   * The tag's description.
+   */
+  description?: string
   /**
    * An external ID for the tag.
    *

@@ -964,6 +964,31 @@
       },
       "new": {
         "label": "New"
+      },
+      "parent": {
+        "label": "Parent category",
+        "none": "None (Top level)"
+      },
+      "thumbnail": {
+        "label": "Thumbnail",
+        "upload": "Upload image",
+        "remove": "Remove",
+        "urlPlaceholder": "Image URL or upload a file"
+      },
+      "displayType": {
+        "label": "Display type",
+        "default": "Default",
+        "products": "Products",
+        "subcategories": "Subcategories",
+        "both": "Both"
+      },
+      "productsCount": {
+        "label": "Count"
+      },
+      "quickCreate": {
+        "toggle": "+ Add new category",
+        "namePlaceholder": "New category name",
+        "add": "Add category"
       }
     }
   },
@@ -3757,7 +3782,9 @@
       "successToast": "Product tag {{value}} was successfully deleted."
     },
     "fields": {
-      "value": "Value"
+      "value": "Value",
+      "handle": "Slug",
+      "description": "Description"
     }
   },
   "propertyLabels": {

@@ -16,6 +16,7 @@ import { useComboboxData } from "../../../../../hooks/use-combobox-data"
 import { sdk } from "../../../../../lib/client"
 import { useExtension } from "../../../../../providers/extension-provider"
 import { CategoryCombobox } from "../../../common/components/category-combobox"
+import { QuickCreateCategory } from "../../../common/components/quick-create-category"
 import {
   useProductCategoryPermissions,
   useProductCollectionPermissions,
@@ -25,7 +26,10 @@ import {
 import { PermissionGuard } from "../../../../../components/common/permission-guard"
 import { collectionsQueryKeys } from "../../../../../hooks/api/collections"
 import { productTypesQueryKeys } from "../../../../../hooks/api/product-types"
-import { productTagsQueryKeys } from "../../../../../hooks/api/tags"
+import {
+  productTagsQueryKeys,
+  useCreateProductTag,
+} from "../../../../../hooks/api/tags"
 
 type ProductOrganizationFormProps = {
   product: HttpTypes.AdminProduct
@@ -47,8 +51,11 @@ export const ProductOrganizationForm = ({
 
   const { canUpdate: canUpdateTypes } = useProductTypePermissions()
   const { canUpdate: canUpdateCollections } = useProductCollectionPermissions()
-  const { canUpdate: canUpdateTags } = useProductTagPermissions()
-  const { canUpdate: canUpdateCategories } = useProductCategoryPermissions()
+  const { canUpdate: canUpdateTags, canCreate: canCreateTags } =
+    useProductTagPermissions()
+  const { canUpdate: canUpdateCategories, canCreate: canCreateCategories } =
+    useProductCategoryPermissions()
+  const { mutateAsync: createTag } = useCreateProductTag()
 
   const configs = getFormConfigs("product", "organize")
   const fields = getFormFields("product", "organize")
@@ -203,6 +210,18 @@ export const ProductOrganizationForm = ({
                       <Form.Control>
                         <CategoryCombobox {...field} />
                       </Form.Control>
+                      {canCreateCategories && (
+                        <QuickCreateCategory
+                          onCreated={(id) => {
+                            const current = form.getValues("category_ids") || []
+                            if (!current.includes(id)) {
+                              form.setValue("category_ids", [...current, id], {
+                                shouldDirty: true,
+                              })
+                            }
+                          }}
+                        />
+                      )}
                       <Form.ErrorMessage />
                     </Form.Item>
                   )
@@ -223,10 +242,42 @@ export const ProductOrganizationForm = ({
                         <Combobox
                           {...field}
                           multiple
+                          displayMode="chips"
                           options={tags.options}
                           onSearchValueChange={tags.onSearchValueChange}
                           searchValue={tags.searchValue}
                           fetchNextPage={tags.fetchNextPage}
+                          onCreateOption={
+                            canCreateTags
+                              ? async (value) => {
+                                  const trimmed = value.trim()
+                                  if (!trimmed) {
+                                    return
+                                  }
+                                  try {
+                                    const { product_tag } = await createTag({
+                                      value: trimmed,
+                                    })
+                                    const current =
+                                      form.getValues("tag_ids") || []
+                                    if (!current.includes(product_tag.id)) {
+                                      form.setValue(
+                                        "tag_ids",
+                                        [...current, product_tag.id],
+                                        { shouldDirty: true }
+                                      )
+                                    }
+                                    tags.onSearchValueChange("")
+                                  } catch (error) {
+                                    toast.error(
+                                      error instanceof Error
+                                        ? error.message
+                                        : t("errors.serverError")
+                                    )
+                                  }
+                                }
+                              : undefined
+                          }
                         />
                       </Form.Control>
                       <Form.ErrorMessage />

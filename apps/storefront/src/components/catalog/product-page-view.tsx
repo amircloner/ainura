@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { categoryTrail } from "@/components/catalog/catalog"
+import { categoryTrail, productCategories } from "@/components/catalog/catalog"
 import { ProductRail } from "@/components/catalog/product-card"
 import { ProductDetail } from "@/components/catalog/product-detail"
 import { Reviews } from "@/components/catalog/reviews"
@@ -22,11 +22,21 @@ export async function ProductPageView({ handle }: { handle: string }) {
       Boolean(item && item.id !== product.id)
     )
 
+  const productCategoryHandles = new Set(
+    productCategories(product).map((item) => item.handle)
+  )
+  const productTagHandles = new Set(
+    (product.tags ?? []).map((tag) => tag.handle)
+  )
+
   const fallbackRelated = products
     .filter(
       (item) =>
         item.id !== product.id &&
-        (item.category.handle === product.category.handle ||
+        (productCategories(item).some((cat) =>
+          productCategoryHandles.has(cat.handle)
+        ) ||
+          (item.tags ?? []).some((tag) => productTagHandles.has(tag.handle)) ||
           (product.brand && item.brand?.id === product.brand.id))
     )
     .slice(0, 12)

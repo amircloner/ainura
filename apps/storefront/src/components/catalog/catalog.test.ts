@@ -6,6 +6,7 @@ import {
   catalogResults,
   colorHex,
   matchesProduct,
+  tagsFrom,
 } from "./catalog.ts"
 
 const sampleCatalog: CatalogProduct[] = [
@@ -19,6 +20,25 @@ const sampleCatalog: CatalogProduct[] = [
       name: "کاپشن زنانه",
       parent: { handle: "womens-apparel", name: "زنانه" },
     },
+    categories: [
+      {
+        handle: "women-warm-jacket",
+        name: "کاپشن زنانه",
+        parent: { handle: "womens-apparel", name: "زنانه" },
+      },
+      {
+        handle: "winter-collection",
+        name: "کلکسیون زمستانه",
+      },
+    ],
+    tags: [
+      {
+        id: "ptag_1",
+        value: "زمستانی",
+        handle: "winter",
+        description: "پوشاک فصل سرد",
+      },
+    ],
     brand: {
       id: "brand_1",
       name: "ام کی",
@@ -85,4 +105,31 @@ test("colorHex resolves dynamic DB color map with Persian normalization", () => 
   assert.equal(colorHex("سرمه‌ای", dbColors), "#28364F")
   assert.equal(colorHex("#123456", dbColors), "#123456")
   assert.equal(colorHex("نامشخص", dbColors), "#e6e1dc")
+})
+
+test("catalog filtering supports WooCommerce-style multi-categories and tags", () => {
+  const [jacket] = sampleCatalog
+  assert.equal(tagsFrom(sampleCatalog).length, 1)
+  assert.equal(matchesProduct(jacket, "زمستانی"), true)
+  assert.equal(
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("tag=winter"))
+    ).length,
+    1
+  )
+  assert.equal(
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("tag=summer"))
+    ).length,
+    0
+  )
+  assert.equal(
+    catalogResults(
+      sampleCatalog,
+      catalogQuery(new URLSearchParams("category=winter-collection"))
+    ).length,
+    1
+  )
 })

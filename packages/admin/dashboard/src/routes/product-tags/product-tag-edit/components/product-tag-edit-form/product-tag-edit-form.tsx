@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { HttpTypes } from "@medusajs/types"
-import { Button, Input, toast } from "@medusajs/ui"
+import { Button, Input, Textarea, toast } from "@medusajs/ui"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
 import { Form } from "../../../../../components/common/form"
+import { HandleInput } from "../../../../../components/inputs/handle-input"
 import { RouteDrawer, useRouteModal } from "../../../../../components/modals"
 import { KeyboundForm } from "../../../../../components/utilities/keybound-form"
 import { useUpdateProductTag } from "../../../../../hooks/api"
@@ -16,6 +17,8 @@ type ProductTagEditFormProps = {
 
 const ProductTagEditSchema = z.object({
   value: z.string().min(1),
+  handle: z.string().optional(),
+  description: z.string().optional(),
 })
 
 export const ProductTagEditForm = ({ productTag }: ProductTagEditFormProps) => {
@@ -25,6 +28,8 @@ export const ProductTagEditForm = ({ productTag }: ProductTagEditFormProps) => {
   const form = useForm<z.infer<typeof ProductTagEditSchema>>({
     defaultValues: {
       value: productTag.value,
+      handle: productTag.handle || "",
+      description: productTag.description || "",
     },
     resolver: zodResolver(ProductTagEditSchema),
   })
@@ -32,19 +37,26 @@ export const ProductTagEditForm = ({ productTag }: ProductTagEditFormProps) => {
   const { mutateAsync, isPending } = useUpdateProductTag(productTag.id)
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    await mutateAsync(data, {
-      onSuccess: ({ product_tag }) => {
-        toast.success(
-          t("productTags.edit.successToast", {
-            value: product_tag.value,
-          })
-        )
-        handleSuccess()
+    await mutateAsync(
+      {
+        value: data.value,
+        handle: data.handle?.trim() || null,
+        description: data.description || "",
       },
-      onError: (error) => {
-        toast.error(error.message)
-      },
-    })
+      {
+        onSuccess: ({ product_tag }) => {
+          toast.success(
+            t("productTags.edit.successToast", {
+              value: product_tag.value,
+            })
+          )
+          handleSuccess()
+        },
+        onError: (error) => {
+          toast.error(error.message)
+        },
+      }
+    )
   })
 
   return (
@@ -53,7 +65,7 @@ export const ProductTagEditForm = ({ productTag }: ProductTagEditFormProps) => {
         className="flex size-full flex-col overflow-hidden"
         onSubmit={handleSubmit}
       >
-        <RouteDrawer.Body className="flex flex-1 flex-col overflow-auto">
+        <RouteDrawer.Body className="flex flex-1 flex-col gap-y-4 overflow-auto">
           <Form.Field
             control={form.control}
             name="value"
@@ -63,6 +75,40 @@ export const ProductTagEditForm = ({ productTag }: ProductTagEditFormProps) => {
                   <Form.Label>{t("productTags.fields.value")}</Form.Label>
                   <Form.Control>
                     <Input {...field} />
+                  </Form.Control>
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
+          />
+          <Form.Field
+            control={form.control}
+            name="handle"
+            render={({ field }) => {
+              return (
+                <Form.Item>
+                  <Form.Label optional>
+                    {t("productTags.fields.handle")}
+                  </Form.Label>
+                  <Form.Control>
+                    <HandleInput {...field} />
+                  </Form.Control>
+                  <Form.ErrorMessage />
+                </Form.Item>
+              )
+            }}
+          />
+          <Form.Field
+            control={form.control}
+            name="description"
+            render={({ field }) => {
+              return (
+                <Form.Item>
+                  <Form.Label optional>
+                    {t("productTags.fields.description")}
+                  </Form.Label>
+                  <Form.Control>
+                    <Textarea {...field} />
                   </Form.Control>
                   <Form.ErrorMessage />
                 </Form.Item>

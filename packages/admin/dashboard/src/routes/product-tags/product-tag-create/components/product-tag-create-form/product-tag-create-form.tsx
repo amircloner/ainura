@@ -1,9 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Heading, Input, Text, toast } from "@medusajs/ui"
+import { Button, Heading, Input, Text, Textarea, toast } from "@medusajs/ui"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Form } from "../../../../../components/common/form"
+import { HandleInput } from "../../../../../components/inputs/handle-input"
 import {
   RouteFocusModal,
   useRouteModal,
@@ -13,6 +14,8 @@ import { useCreateProductTag } from "../../../../../hooks/api"
 
 const ProductTagCreateSchema = z.object({
   value: z.string().min(1),
+  handle: z.string().optional(),
+  description: z.string().optional(),
 })
 
 export const ProductTagCreateForm = () => {
@@ -22,6 +25,8 @@ export const ProductTagCreateForm = () => {
   const form = useForm<z.infer<typeof ProductTagCreateSchema>>({
     defaultValues: {
       value: "",
+      handle: "",
+      description: "",
     },
     resolver: zodResolver(ProductTagCreateSchema),
   })
@@ -29,19 +34,26 @@ export const ProductTagCreateForm = () => {
   const { mutateAsync, isPending } = useCreateProductTag()
 
   const handleSubmit = form.handleSubmit(async (data) => {
-    await mutateAsync(data, {
-      onSuccess: ({ product_tag }) => {
-        toast.success(
-          t("productTags.create.successToast", {
-            value: product_tag.value,
-          })
-        )
-        handleSuccess(`../${product_tag.id}`)
+    await mutateAsync(
+      {
+        value: data.value,
+        handle: data.handle?.trim() || undefined,
+        description: data.description || "",
       },
-      onError: (error) => {
-        toast.error(error.message)
-      },
-    })
+      {
+        onSuccess: ({ product_tag }) => {
+          toast.success(
+            t("productTags.create.successToast", {
+              value: product_tag.value,
+            })
+          )
+          handleSuccess(`../${product_tag.id}`)
+        },
+        onError: (error) => {
+          toast.error(error.message)
+        },
+      }
+    )
   })
 
   return (
@@ -79,7 +91,41 @@ export const ProductTagCreateForm = () => {
                   )
                 }}
               />
+              <Form.Field
+                control={form.control}
+                name="handle"
+                render={({ field }) => {
+                  return (
+                    <Form.Item>
+                      <Form.Label optional>
+                        {t("productTags.fields.handle")}
+                      </Form.Label>
+                      <Form.Control>
+                        <HandleInput {...field} />
+                      </Form.Control>
+                      <Form.ErrorMessage />
+                    </Form.Item>
+                  )
+                }}
+              />
             </div>
+            <Form.Field
+              control={form.control}
+              name="description"
+              render={({ field }) => {
+                return (
+                  <Form.Item>
+                    <Form.Label optional>
+                      {t("productTags.fields.description")}
+                    </Form.Label>
+                    <Form.Control>
+                      <Textarea {...field} />
+                    </Form.Control>
+                    <Form.ErrorMessage />
+                  </Form.Item>
+                )
+              }}
+            />
           </div>
         </RouteFocusModal.Body>
         <RouteFocusModal.Footer>

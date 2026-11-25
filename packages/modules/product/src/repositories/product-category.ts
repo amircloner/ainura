@@ -91,7 +91,7 @@ export class ProductCategoryRepository extends DALUtils.MikroOrmBaseTreeReposito
       InferEntityType<typeof ProductCategory>
     >(
       ProductCategory.name,
-      findOptions_.where,
+      findOptions_.where as any,
       { ...findOptions_.options } as any // TODO
     )
 
@@ -265,7 +265,7 @@ export class ProductCategoryRepository extends DALUtils.MikroOrmBaseTreeReposito
 
     const [productCategories, count] = (await manager.findAndCount(
       ProductCategory.name,
-      findOptions_.where,
+      findOptions_.where as any,
       findOptions_.options as any
     )) as unknown as [InferEntityType<typeof ProductCategory>[], number]
 
