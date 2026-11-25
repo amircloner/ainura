@@ -6,11 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import { useCommerce } from "@/lib/commerce"
 import { STATIC_MEGA_MENU } from "./static-nav"
 import type { CatalogBrand, CatalogProduct } from "@/lib/medusa"
-import {
-  categoriesFrom,
-  matchesProduct,
-  matchesText,
-} from "../catalog/catalog"
+import { categoriesFrom, matchesProduct, matchesText } from "../catalog/catalog"
 import { Icon, Media, Modal, number } from "./ui"
 
 export function Header({
@@ -28,6 +24,7 @@ export function Header({
   const headerRef = useRef<HTMLElement>(null)
   const router = useRouter()
   const pathname = usePathname()
+  const isPdp = /^\/products?\/[^/]+\/?$/.test(pathname)
 
   const categories = categoriesFrom(products)
   const count = cart.reduce((sum, item) => sum + item.quantity, 0)
@@ -83,12 +80,28 @@ export function Header({
     setSearch(false)
   }
 
+  const categoryButtons = STATIC_MEGA_MENU.map((item) => (
+    <button
+      key={item.id}
+      type="button"
+      className="ds-nav-tab"
+      aria-expanded={activeMenuId === item.id}
+      onMouseEnter={() => setActiveMenuId(item.id)}
+      onClick={() =>
+        setActiveMenuId((cur) => (cur === item.id ? null : item.id))
+      }
+    >
+      {item.title}
+    </button>
+  ))
+
   return (
     <header
-      className="ds-header"
+      className={isPdp ? "ds-header ds-header-pdp" : "ds-header"}
       ref={headerRef}
       onMouseLeave={() => setActiveMenuId(null)}
     >
+      {isPdp && <div className="ds-pdp-masthead">فروشگاه دیجی‌استایل</div>}
       <div className="ds-header-inner">
         <div className="ds-header-start">
           <button
@@ -115,39 +128,51 @@ export function Header({
             />
           </Link>
 
-          <nav className="ds-nav-tabs" aria-label="دسته‌بندی‌های دیجی‌استایل">
-            {STATIC_MEGA_MENU.map((item) => (
-              <button
-                key={item.id}
-                type="button"
+          {isPdp ? (
+            <nav className="ds-nav-tabs" aria-label="استایل‌ها">
+              <Link
+                href="/products"
                 className="ds-nav-tab"
-                aria-expanded={activeMenuId === item.id}
-                onMouseEnter={() => setActiveMenuId(item.id)}
-                onClick={() =>
-                  setActiveMenuId((cur) => (cur === item.id ? null : item.id))
-                }
+                data-active="true"
+                onClick={closeAll}
               >
-                {item.title}
-              </button>
-            ))}
-            <Link
-              href="/landings/jackets"
-              className="ds-nav-tab"
-              data-active={pathname === "/landings/jackets" ? "true" : undefined}
-              onMouseEnter={() => setActiveMenuId(null)}
-              onClick={closeAll}
-            >
-              کاپشن و پالتو
-            </Link>
-            <Link
-              href="/products?sale=1&sort=discount"
-              className="ds-nav-tab ds-nav-tab-sale"
-              onMouseEnter={() => setActiveMenuId(null)}
-              onClick={closeAll}
-            >
-              حراج استایل
-            </Link>
-          </nav>
+                همه استایل‌ها
+              </Link>
+              {STATIC_MEGA_MENU.slice(0, 3).map((item) => (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className="ds-nav-tab"
+                  onClick={closeAll}
+                >
+                  {item.title}
+                </Link>
+              ))}
+            </nav>
+          ) : (
+            <nav className="ds-nav-tabs" aria-label="دسته‌بندی‌های دیجی‌استایل">
+              {categoryButtons}
+              <Link
+                href="/landings/jackets"
+                className="ds-nav-tab"
+                data-active={
+                  pathname === "/landings/jackets" ? "true" : undefined
+                }
+                onMouseEnter={() => setActiveMenuId(null)}
+                onClick={closeAll}
+              >
+                کاپشن و پالتو
+              </Link>
+              <Link
+                href="/products?sale=1&sort=discount"
+                className="ds-nav-tab ds-nav-tab-sale"
+                onMouseEnter={() => setActiveMenuId(null)}
+                onClick={closeAll}
+              >
+                حراج استایل
+              </Link>
+            </nav>
+          )}
         </div>
 
         <div className="ds-header-end">
@@ -170,7 +195,7 @@ export function Header({
               aria-label="ورود یا ثبت نام"
               onClick={closeAll}
             >
-              <Icon name="user" size={20} />
+              <Icon name={isPdp ? "login" : "user"} size={20} />
               <span>ورود | ثبت نام</span>
             </Link>
 
@@ -195,7 +220,7 @@ export function Header({
                 openCart()
               }}
             >
-              <Icon name="bag" size={22} />
+              <Icon name={isPdp ? "cart" : "bag"} size={22} />
               {count > 0 && (
                 <span className="ds-cart-badge">{number(count)}</span>
               )}
@@ -203,6 +228,15 @@ export function Header({
           </div>
         </div>
       </div>
+
+      {isPdp && (
+        <nav
+          className="ds-nav-tabs ds-pdp-categories"
+          aria-label="دسته‌بندی‌های دیجی‌استایل"
+        >
+          {categoryButtons}
+        </nav>
+      )}
 
       {activeMenu && (
         <div className="ds-mega">

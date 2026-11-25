@@ -53,46 +53,22 @@ export async function ProductPageView({ handle }: { handle: string }) {
   }))
 
   return (
-    <main>
+    <main className="ds-product-page">
       <div className="ds-pdp-wrap">
-        <Breadcrumbs items={[...crumbs, { label: product.title }]} />
-        <ProductDetail product={product} stats={stats} />
+        <Breadcrumbs items={crumbs} homeLabel="دیجی‌استایل" />
+        <ProductDetail key={product.id} product={product} stats={stats} />
+      </div>
 
-        <nav className="ds-pdp-tabs-bar" aria-label="بخش‌های صفحه محصول">
-          <a href="#review">نقد و بررسی</a>
-          <a href="#specifications">مشخصات محصول</a>
-          <a href="#reviews">دیدگاه و امتیاز کاربران</a>
-          {related.length > 0 && <a href="#related">کالاهای مشابه</a>}
-        </nav>
-
-        {product.description && (
-          <section className="ds-pdp-section" id="review">
-            <h2>نقد و بررسی</h2>
-            <p className="ds-pdp-desc">{product.description}</p>
-          </section>
-        )}
-
-        <section className="ds-pdp-section" id="specifications">
-          <h2>مشخصات محصول</h2>
-          {product.metadata.specifications?.length ? (
-            <dl className="ds-specs-table">
-              {product.metadata.specifications.map(({ label, value }, index) => (
-                <div className="ds-specs-row" key={index}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-          ) : (
-            <p className="store-muted">
-              مشخصات تکمیلی برای این محصول درج نشده است.
-            </p>
-          )}
+      {related.length > 0 && (
+        <section id="related" aria-label="کالاهای مشابه">
+          <ProductRail title="کالاهای مشابه" products={related} />
         </section>
-
+      )}
+      <div className="ds-pdp-wrap">
         <section className="ds-pdp-section" id="reviews">
-          <h2>دیدگاه و امتیاز کاربران</h2>
+          <h2>{stats.total_count ? "امتیاز و دیدگاه کاربران" : "دیدگاه‌ها"}</h2>
           <Reviews
+            key={product.id}
             productId={product.id}
             productHandle={product.handle}
             demo={product.demo}
@@ -101,12 +77,6 @@ export async function ProductPageView({ handle }: { handle: string }) {
           />
         </section>
       </div>
-
-      {related.length > 0 && (
-        <div id="related" style={{ paddingBottom: 24 }}>
-          <ProductRail title="کالاهای مشابه" products={related} />
-        </div>
-      )}
     </main>
   )
 }

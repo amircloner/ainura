@@ -1,0 +1,15 @@
+diff --git a/medusa-config.ts b/medusa-config.ts
+--- a/medusa-config.ts
++++ b/medusa-config.ts
+@@ -2,6 +2,8 @@
+ import { loadEnv, defineConfig } from '@medusajs/framework/utils'
++import { otpAuthModule, otpHttp } from './src/phone-otp-config'
+ 
+ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
+ 
+ module.exports = defineConfig({
++  modules: [otpAuthModule()],
+   projectConfig: {
+@@ -14,1 +16,2 @@
+     http: {
++      ...otpHttp,

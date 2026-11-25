@@ -2,18 +2,14 @@
 
 import type { HttpTypes } from "@medusajs/types"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import { OtpLogin } from "./otp-login"
 import { AddressFields, readAddress } from "@/components/commerce/address"
 import { commerceError, useCommerce } from "@/lib/commerce"
-import { connected, formatPrice, sdk, toPersian } from "@/lib/medusa"
+import { formatPrice, sdk, toPersian } from "@/lib/medusa"
 
 export default function AccountPage() {
-  const { ready, customer, busy, authenticate, logout, changeAddress } =
-    useCommerce()
-  const router = useRouter()
-  const dialog = useRef<HTMLDialogElement>(null)
-  const [register, setRegister] = useState(false)
+  const { ready, customer, busy, logout, changeAddress } = useCommerce()
   const [error, setError] = useState("")
   const [history, setHistory] = useState<{
     customerId: string
@@ -45,139 +41,7 @@ export default function AccountPage() {
         <p>در حال بارگذاری…</p>
       </main>
     )
-  if (!customer)
-    return (
-      <main className="commerce-page">
-        <h1>حساب کاربری</h1>
-        <section className="commerce-panel commerce-stack">
-          <p>
-            {connected
-              ? "برای پیگیری سفارش‌ها و ذخیره نشانی‌های خود وارد شوید."
-              : "ورود و ثبت‌نام با اتصال فروشگاه فعال می‌شود. علاقه‌مندی‌های آزمایشی روی همین دستگاه می‌مانند."}
-          </p>
-          {connected && (
-            <div className="commerce-actions">
-              <button
-                className="commerce-primary"
-                onClick={() => {
-                  setError("")
-                  setRegister(false)
-                  dialog.current?.showModal()
-                }}
-              >
-                ورود
-              </button>
-              <button
-                onClick={() => {
-                  setError("")
-                  setRegister(true)
-                  dialog.current?.showModal()
-                }}
-              >
-                ثبت‌نام
-              </button>
-            </div>
-          )}
-          <Link href="/wishlist">فهرست علاقه‌مندی‌ها</Link>
-        </section>
-        <dialog
-          ref={dialog}
-          className="commerce-dialog"
-          aria-labelledby="account-auth-title"
-        >
-          <div className="commerce-row">
-            <h2 id="account-auth-title">
-              {register ? "ثبت‌نام در آینورا" : "ورود به آینورا"}
-            </h2>
-            <button type="button" onClick={() => dialog.current?.close()}>
-              بستن
-            </button>
-          </div>
-          <form
-            className="commerce-stack"
-            key={String(register)}
-            onSubmit={async (event) => {
-              event.preventDefault()
-              setError("")
-              const data = new FormData(event.currentTarget)
-              try {
-                await authenticate(
-                  {
-                    email: String(data.get("email")).trim(),
-                    password: String(data.get("password")),
-                    first_name:
-                      String(data.get("first_name") ?? "").trim() || undefined,
-                    last_name:
-                      String(data.get("last_name") ?? "").trim() || undefined,
-                  },
-                  register
-                )
-                dialog.current?.close()
-                const next = new URLSearchParams(window.location.search).get(
-                  "next"
-                )
-                if (next && /^\/products\/[\w%-]+(?:#reviews)?$/.test(next))
-                  router.replace(next)
-              } catch (error) {
-                setError(commerceError(error))
-              }
-            }}
-          >
-            {register && (
-              <div className="commerce-fields">
-                <label>
-                  نام
-                  <input name="first_name" autoComplete="given-name" required />
-                </label>
-                <label>
-                  نام خانوادگی
-                  <input name="last_name" autoComplete="family-name" required />
-                </label>
-              </div>
-            )}
-            <label>
-              ایمیل
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                dir="ltr"
-                required
-              />
-            </label>
-            <label>
-              رمز عبور
-              <input
-                name="password"
-                type="password"
-                autoComplete={register ? "new-password" : "current-password"}
-                dir="ltr"
-                minLength={register ? 8 : undefined}
-                required
-              />
-            </label>
-            {error && (
-              <p className="commerce-error" role="alert">
-                {error}
-              </p>
-            )}
-            <button className="commerce-primary" disabled={busy}>
-              {register ? "ساخت حساب" : "ورود"}
-            </button>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={() => {
-                setError("")
-                setRegister(!register)
-              }}
-            >
-              {register ? "قبلاً حساب ساخته‌ام" : "حساب جدید بسازید"}
-            </button>
-          </form>
-        </dialog>
-      </main>
-    )
+  if (!customer) return <OtpLogin />
 
   return (
     <main className="commerce-page">
@@ -190,7 +54,7 @@ export default function AccountPage() {
       <p>
         {customer.first_name
           ? `${customer.first_name}، خوش آمدید.`
-          : customer.email}
+          : customer.phone || "خوش آمدید."}
       </p>
       <div className="commerce-grid">
         <section className="commerce-panel commerce-stack">

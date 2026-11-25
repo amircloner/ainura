@@ -2,6 +2,11 @@ import Medusa from "@medusajs/js-sdk"
 import type { HttpTypes, ProductFashionMetadata } from "@medusajs/types"
 import { cache } from "react"
 import { reviewStats } from "./format"
+import {
+  allReviewPages,
+  type ReviewFeedback,
+  type ReviewVote,
+} from "./review-feedback"
 import type {
   CatalogBrand,
   CatalogCategory,
@@ -14,6 +19,7 @@ import type {
 
 export * from "./format"
 export * from "./seed-data"
+export type { ReviewFeedback, ReviewVote } from "./review-feedback"
 
 const backendUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
 const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
@@ -340,13 +346,15 @@ export async function getReviews(
     return { reviews: [], stats: reviewStats(productId, []) }
   }
   try {
-    const { reviews, stats } =
-      await sdk.client.fetch<HttpTypes.StoreProductReviewListResponse>(
-        `/store/products/${productId}/reviews`,
+    const { reviews, stats } = await allReviewPages((offset) =>
+      sdk.client.fetch<HttpTypes.StoreProductReviewListResponse>(
+        `/store/products/${encodeURIComponent(productId)}/reviews`,
         {
+          query: { limit: 100, offset, order: "-id" },
           signal: AbortSignal.timeout(4000),
         }
       )
+    )
     return { reviews, stats: stats ?? reviewStats(productId, reviews) }
   } catch {
     return { reviews: [], stats: reviewStats(productId, []) }
@@ -358,4 +366,40 @@ export function submitReview(
   input: HttpTypes.StoreCreateProductReview
 ) {
   return sdk.store.review.create(productId, input)
+}
+
+async function feedbackRequest(
+  productId: string,
+  body?: { review_id: string; vote: ReviewVote | null }
+) {
+  const token = await sdk.client.getToken()
+  const result = await fetch(
+    `/api/review-feedback/${encodeURIComponent(productId)}`,
+    {
+      method: body ? "PUT" : "GET",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(body ? { "Content-Type": "application/json" } : {}),
+      },
+      cache: "no-store",
+      body: body ? JSON.stringify(body) : undefined,
+    }
+  )
+  if (!result.ok)
+    throw new Error(`Review feedback request failed (${result.status})`)
+  return result.json()
+}
+
+export function getReviewFeedback(
+  productId: string
+): Promise<Record<string, ReviewFeedback>> {
+  return feedbackRequest(productId)
+}
+
+export function setReviewFeedback(
+  productId: string,
+  reviewId: string,
+  vote: ReviewVote | null
+): Promise<ReviewFeedback> {
+  return feedbackRequest(productId, { review_id: reviewId, vote })
 }

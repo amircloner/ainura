@@ -12,6 +12,7 @@ import {
 import "./globals.css"
 import "./commerce.css"
 import "./digistyle.css"
+import "./pdp-header.css"
 
 export const revalidate = 60
 

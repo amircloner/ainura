@@ -1,5 +1,7 @@
 import assert from "node:assert/strict"
 import test from "node:test"
+import { orderReviews } from "./review-order.ts"
+import type { CatalogReview } from "../../lib/seed-data.ts"
 import type { CatalogProduct } from "../../lib/seed-data.ts"
 import {
   catalogQuery,
@@ -8,6 +10,35 @@ import {
   matchesProduct,
   tagsFrom,
 } from "./catalog.ts"
+
+test("review ordering distinguishes helpful, recent, and verified buyers", () => {
+  const review: CatalogReview = {
+    id: "older",
+    created_at: "2026-01-01",
+    customer_name: "A",
+    rating: 4,
+    content: "Review",
+    is_recommended: true,
+    verified_purchase: true,
+  }
+  const reviews = [
+    review,
+    {
+      ...review,
+      id: "newer",
+      created_at: "2026-02-01",
+      verified_purchase: false,
+    },
+  ]
+  const feedback = {
+    older: { helpful: 3, unhelpful: 1 },
+    newer: { helpful: 4, unhelpful: 4 },
+  }
+  assert.equal(orderReviews(reviews, "helpful", feedback)[0].id, "older")
+  assert.equal(orderReviews(reviews, "newest", feedback)[0].id, "newer")
+  assert.deepEqual(orderReviews(reviews, "buyers", feedback), [review])
+  assert.equal(reviews[0].id, "older")
+})
 
 const sampleCatalog: CatalogProduct[] = [
   {

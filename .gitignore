@@ -42,3 +42,4 @@ dist/**
 /apps/storefront/.next/
 /apps/storefront/next-env.d.ts
 /apps/storefront/.env.local
+.ainura-data/

@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start --port 8000",
     "typecheck": "tsc --noEmit",
-    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test src/lib/__tests__/storefront.test.ts src/components/catalog/catalog.test.ts"
+    "test": "node --disable-warning=ExperimentalWarning --experimental-strip-types --test src/lib/__tests__/*.test.ts src/components/catalog/catalog.test.ts"
   },
   "dependencies": {
     "@medusajs/js-sdk": "workspace:^",

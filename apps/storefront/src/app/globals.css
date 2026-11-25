@@ -1246,58 +1246,172 @@ html:has(dialog[open]) {
 }
 .store-review-layout {
   display: grid;
-  grid-template-columns: minmax(185px, 245px) minmax(0, 1fr);
-  gap: 25px;
-  margin-block-start: 14px;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 48px;
+  margin-block-start: 28px;
 }
 .store-review-summary {
   align-self: start;
-  display: grid;
-  gap: 7px;
-  border: 1px solid var(--store-line);
-  padding: 12px;
-  background: white;
+  position: sticky;
+  top: 184px;
+  color: var(--ds-grey-700);
+  font-size: 12px;
 }
-.store-review-summary > strong {
-  font-size: 1.8rem;
+.ds-product-page #reviews h2 {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  line-height: 34px;
 }
-.store-review-summary small,
-.store-review-summary p {
-  font-size: 0.8rem;
-  color: var(--store-muted);
+.ds-product-page #reviews h2::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 2px;
+  background: var(--ds-grey-700);
+  margin-top: 8px;
 }
-.store-review-summary p svg {
-  display: inline-block;
+.ds-review-score {
+  display: flex;
+  gap: 4px;
+  align-items: baseline;
+  font-size: 12px;
+  color: var(--store-ink);
 }
-.store-rating-row {
-  display: grid;
-  width: 100%;
-  grid-template-columns: 31px 1fr 26px;
+.ds-review-score strong {
+  font-size: 24px;
+}
+.ds-review-stars {
+  display: inline-flex;
+  flex: none;
+}
+.ds-review-stars > span {
+  width: 20px;
+  height: 20px;
+  clip-path: polygon(
+    50% 0,
+    62% 35%,
+    100% 38%,
+    70% 62%,
+    80% 100%,
+    50% 78%,
+    20% 100%,
+    30% 62%,
+    0 38%,
+    38% 35%
+  );
+}
+.ds-review-total,
+.ds-review-sort,
+.ds-review-sort strong {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.79rem;
-  padding: 3px;
-  text-align: start;
 }
-.store-rating-row[aria-pressed="true"] {
-  background: var(--store-surface);
+.ds-review-total {
+  gap: 8px;
+  margin-top: 6px;
 }
-.store-rating-row progress {
-  accent-color: #826350;
+.ds-review-total small {
+  font-size: 11px;
+  color: #747582;
+}
+.ds-review-invite {
+  margin-block: 16px 12px;
+}
+.store-review-summary .store-button {
   width: 100%;
-  height: 8px;
+  min-height: 40px;
+  border-color: currentColor;
+  border-radius: 2px;
+  font-size: 12px;
+}
+.ds-review-sort {
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  padding-block: 14px;
+  color: #696b7b;
+  font-size: 13px;
+}
+.ds-review-sort strong {
+  gap: 6px;
+  color: var(--ds-grey-700);
+}
+.ds-review-sort button {
+  min-height: 30px;
+}
+.ds-review-sort button[aria-pressed="true"] {
+  color: var(--ds-grey-700);
+  font-weight: 700;
+}
+.ds-review-sort > span {
+  margin-inline-start: auto;
+}
+.ds-review-empty {
+  padding-block: 2px 16px;
+}
+.ds-review-empty strong {
+  font-size: 15px;
+}
+.ds-review-empty p {
+  margin-top: 10px;
+  color: #696b7b;
+  font-size: 13px;
+  line-height: 2;
 }
 .store-review-list {
-  display: grid;
-  justify-items: start;
-  gap: 12px;
+  min-width: 0;
+}
+.store-review-meta .store-verified {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  background: #edf6ed;
+  color: #327843;
+  padding-inline: 8px;
+  border-radius: 12px;
+}
+.store-review-meta time::before {
+  content: "·";
+  padding-inline-end: 8px;
+}
+.ds-review-votes {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+}
+.ds-review-votes :is(button, a) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 42px;
+  min-height: 36px;
+  font-size: 12px;
+  color: #717383;
+}
+.ds-review-votes button[aria-pressed="true"] {
+  color: var(--store-accent);
+}
+@media (max-width: 680px) {
+  .store-review-summary {
+    position: static;
+  }
+  .store-review-layout {
+    gap: 24px;
+  }
+  .ds-review-sort {
+    gap: 4px 12px;
+    border-block: 1px solid var(--store-line);
+  }
 }
 .store-review {
   width: 100%;
   display: grid;
   gap: 6px;
   padding: 12px 0;
-  border-block-end: 1px solid var(--store-line);
+}
+.store-review + .store-review {
+  border-block-start: 1px solid var(--store-line);
 }
 .store-review h3 {
   font-weight: 800;
@@ -1318,6 +1432,11 @@ html:has(dialog[open]) {
 .store-review-meta time {
   color: var(--store-muted);
   font-size: 0.73rem;
+}
+.store-review-meta {
+  color: #737583;
+  font-size: 12px;
+  gap: 8px;
 }
 .store-review-points {
   align-items: start;

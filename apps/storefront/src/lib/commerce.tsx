@@ -25,12 +25,6 @@ type CartLine = {
   quantity: number
 }
 type Address = HttpTypes.StoreCreateCustomerAddress
-type AuthInput = {
-  email: string
-  password: string
-  first_name?: string
-  last_name?: string
-}
 type RemoteWishlist = Record<string, string>
 const cartKey = "ainura-cart"
 const demoCartKey = "ainura-demo-cart"
@@ -46,6 +40,10 @@ function readLocal<T>(key: string, fallback: T): T {
 
 export const commerceError = (error: unknown) =>
   error instanceof Error ? error.message : "عملیات انجام نشد. دوباره تلاش کنید."
+
+// Phone-only accounts have a Medusa identity address, not a delivery address.
+export const contactEmail = (email?: string | null) =>
+  email?.endsWith("@phone.invalid") ? undefined : email || undefined
 
 function useCommerceState(
   catalog: CatalogProduct[],
@@ -159,7 +157,7 @@ function useCommerceState(
     const region = await getRegion()
     const { cart } = await sdk.store.cart.create({
       region_id: region.id,
-      email: customer?.email,
+      email: contactEmail(customer?.email),
     })
     rememberCart(cart)
     return cart
@@ -347,24 +345,17 @@ function useCommerceState(
     }
   }
 
-  async function authenticate(input: AuthInput, register: boolean) {
+  async function completeOtpLogin(token: string) {
     await run(async () => {
       if (!connected)
         throw new Error("ورود و ثبت‌نام در حالت آزمایشی فعال نیست.")
-      const { email, password, first_name, last_name } = input
-      if (register) {
-        await sdk.auth.register("customer", "emailpass", { email, password })
-        await sdk.store.customer.create({ email, first_name, last_name })
-      }
-      const auth = await sdk.auth.login("customer", "emailpass", {
-        email,
-        password,
-      })
-      if (typeof auth !== "string")
-        throw new Error("این حساب به تأیید دیگری نیاز دارد.")
-      const { customer } = await sdk.store.customer.retrieve({
-        fields: "+addresses",
-      })
+      await sdk.client.setToken(token)
+      const { customer } = await sdk.store.customer
+        .retrieve({ fields: "+addresses" })
+        .catch(async () => {
+          await sdk.client.clearToken()
+          throw new Error("ورود تکمیل نشد. دوباره کد دریافت کنید.")
+        })
       setCustomer(customer)
       if (liveCart?.items?.length)
         rememberCart((await sdk.store.cart.transferCart(liveCart.id)).cart)
@@ -506,7 +497,7 @@ function useCommerceState(
     updateQuantity,
     toggleWishlist,
     applyCoupon,
-    authenticate,
+    completeOtpLogin,
     logout,
     changeAddress,
     prepareCheckout,

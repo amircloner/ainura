@@ -1,14 +1,19 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useCommerce } from "@/lib/commerce"
 import {
   submitReview,
+  getReviewFeedback,
+  setReviewFeedback,
+  type ReviewFeedback,
+  type ReviewVote,
   type CatalogReview,
   type ReviewStats,
 } from "@/lib/medusa"
 import { Icon, Modal, number } from "../layout/ui"
+import { orderReviews } from "./review-order"
 
 const RATINGS = [5, 4, 3, 2, 1] as const
 const date = new Intl.DateTimeFormat("fa-IR", {
@@ -17,16 +22,21 @@ const date = new Intl.DateTimeFormat("fa-IR", {
 })
 
 function Stars({ rating }: { rating: number }) {
-  const filled = Math.min(5, Math.max(0, Math.round(rating)))
   return (
     <span
-      className="store-stars"
-      dir="ltr"
+      className="ds-review-stars"
       role="img"
       aria-label={`${number(rating)} از ۵ ستاره`}
     >
-      {"★".repeat(filled)}
-      <span>{"☆".repeat(5 - filled)}</span>
+      {RATINGS.map((key, index) => (
+        <span
+          key={key}
+          aria-hidden="true"
+          style={{
+            background: `linear-gradient(to left, #ffb400 ${Math.min(1, Math.max(0, rating - index)) * 100}%, #ececee 0)`,
+          }}
+        />
+      ))}
     </span>
   )
 }
@@ -50,96 +60,169 @@ export function Reviews({
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
   const [limit, setLimit] = useState(4)
-  const [filter, setFilter] = useState(0)
-  const visibleReviews = reviews.filter(
-    (review) => !filter || review.rating === filter
-  )
+  const [sort, setSort] = useState<"helpful" | "buyers" | "newest">("helpful")
+  const [feedback, setFeedback] = useState<Record<string, ReviewFeedback>>({})
+  const [voting, setVoting] = useState("")
+  const [voteError, setVoteError] = useState("")
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    let current = true
+    setFeedback({})
+    setVoteError("")
+    if (!demo && reviews.length) {
+      getReviewFeedback(productId)
+        .then((data) => {
+          if (current) setFeedback(data)
+        })
+        .catch(() => {
+          if (current) setVoteError("دریافت رأی‌ها ممکن نبود.")
+        })
+    }
+    return () => {
+      current = false
+    }
+  }, [productId, customer?.id, demo, reviews.length, attempt])
+  const visibleReviews = orderReviews(reviews, sort, feedback)
+  async function vote(id: string, direction: ReviewVote) {
+    if (voting || !customer || !feedback[id]) return
+    setVoting(id)
+    setVoteError("")
+    try {
+      const data = await setReviewFeedback(
+        productId,
+        id,
+        feedback[id].current_vote === direction ? null : direction
+      )
+      setFeedback((prev) => ({ ...prev, [id]: data }))
+    } catch {
+      setVoteError("ثبت رأی ممکن نبود.")
+    } finally {
+      setVoting("")
+    }
+  }
+  const loginHref = `/account?${new URLSearchParams({ next: `/products/${encodeURIComponent(productHandle)}#reviews` })}`
 
   return (
     <div className="store-review-layout">
       <aside className="store-review-summary">
         {stats.total_count ? (
-          <>
-            <strong>
-              {number(stats.average_rating)} <small>از ۵</small>
-            </strong>
-            <Stars rating={stats.average_rating} />
-            <p>بر اساس {number(stats.total_count)} دیدگاه</p>
-            <p>
-              <Icon name="check" size={16} />{" "}
-              {number(Math.round(stats.recommendation_percentage))}٪ پیشنهاد
-              خرید
-            </p>
-            <div className="store-distribution" aria-label="توزیع امتیازها">
-              {RATINGS.map((rating) => (
-                <button
-                  className="store-rating-row"
-                  key={rating}
-                  type="button"
-                  aria-label={`فیلتر ${number(rating)} ستاره، ${number(stats.distribution[rating] ?? 0)} دیدگاه`}
-                  aria-pressed={filter === rating}
-                  onClick={() => {
-                    setLimit(4)
-                    setFilter(filter === rating ? 0 : rating)
-                  }}
-                >
-                  <span>{number(rating)} ★</span>
-                  <progress
-                    max={stats.total_count}
-                    value={stats.distribution[rating] ?? 0}
-                    aria-label={`دیدگاه‌های ${number(rating)} ستاره`}
-                  />
-                  <span>{number(stats.distribution[rating] ?? 0)}</span>
-                </button>
-              ))}
-            </div>
-          </>
+          <div className="ds-review-score">
+            <strong>{number(stats.average_rating)}</strong> از ۵
+          </div>
         ) : (
-          <p>هنوز دیدگاهی ثبت نشده است.</p>
+          <p>هنوز امتیازی ثبت نشده است</p>
         )}
-        <button
-          className="store-button store-outline"
-          type="button"
-          onClick={() => {
-            setError("")
-            setWriting(true)
-          }}
-        >
-          ثبت دیدگاه
-        </button>
-        {message && <p role="status">{message}</p>}
-      </aside>
-      <div className="store-review-list">
-        {demo && reviews.length > 0 && (
-          <p className="store-muted">این دیدگاه‌ها نمونه و ساختگی هستند.</p>
-        )}
-        {filter > 0 && (
+        <div className="ds-review-total">
+          <Stars rating={stats.average_rating} />
+          {stats.total_count > 0 && (
+            <small>از مجموع {number(stats.total_count)} امتیاز</small>
+          )}
+        </div>
+        <p className="ds-review-invite">
+          شما هم درباره این کالا دیدگاه ثبت کنید
+        </p>
+        {!customer && !demo ? (
+          <Link className="store-button store-outline" href={loginHref}>
+            ثبت دیدگاه
+          </Link>
+        ) : (
           <button
             className="store-button store-outline"
             type="button"
             onClick={() => {
-              setFilter(0)
-              setLimit(4)
+              setError("")
+              setWriting(true)
             }}
           >
-            نمایش همه دیدگاه‌ها <Icon name="close" size={15} />
+            ثبت دیدگاه
           </button>
         )}
-        {!visibleReviews.length && (
-          <p className="store-muted">
-            {filter
-              ? "دیدگاه قابل نمایشی با این امتیاز نیست."
-              : "هنوز دیدگاهی برای این محصول درج نشده است."}
+        {message && <p role="status">{message}</p>}
+      </aside>
+      <div className="store-review-list">
+        {reviews.length > 0 && (
+          <div
+            className="ds-review-sort"
+            role="group"
+            aria-label="مرتب‌سازی دیدگاه‌ها"
+          >
+            <strong>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path d="M5 3v16m-3-3 3 3 3-3M11 5h11M11 11h8M11 17h5" />
+              </svg>
+              مرتب سازی:
+            </strong>
+            {(
+              [
+                ["newest", "جدیدترین"],
+                ["buyers", "دیدگاه خریداران"],
+                ["helpful", "مفیدترین"],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                type="button"
+                key={value}
+                aria-pressed={sort === value}
+                onClick={() => {
+                  setSort(value)
+                  setLimit(4)
+                }}
+              >
+                {label}
+              </button>
+            ))}
+            <span>
+              {number(
+                sort === "buyers" ? visibleReviews.length : stats.total_count
+              )}{" "}
+              دیدگاه
+            </span>
+          </div>
+        )}
+        {demo && reviews.length > 0 && (
+          <p className="store-muted">این دیدگاه‌ها نمونه و ساختگی هستند.</p>
+        )}
+        {voteError && (
+          <p role="status">
+            {voteError}{" "}
+            <button
+              type="button"
+              className="ds-review-retry"
+              onClick={() => setAttempt((n) => n + 1)}
+            >
+              دریافت دوبارهٔ رأی‌ها
+            </button>
           </p>
+        )}
+        {!visibleReviews.length && (
+          <div className="ds-review-empty">
+            {reviews.length ? (
+              <p>هنوز دیدگاهی از خریداران ثبت نشده است.</p>
+            ) : (
+              <>
+                <strong>شما هم می‌توانید در مورد این کالا نظر دهید.</strong>
+                <p>
+                  دیدگاه خریداران با نشان «خریدار» مشخص می‌شود. همچنین در صورت
+                  تمایل می‌توانید به صورت ناشناس نیز دیدگاه خود را ثبت کنید.
+                </p>
+              </>
+            )}
+          </div>
         )}
         {visibleReviews.slice(0, limit).map((review) => (
           <article className="store-review" key={review.id}>
             <div className="store-review-meta">
-              <strong>{review.customer_name}</strong>
+              <span>{review.customer_name || "کاربر دیجی‌استایل"}</span>
               {review.verified_purchase && (
-                <span className="store-verified">
-                  <Icon name="check" size={14} /> خریدار تأییدشده
-                </span>
+                <span className="store-verified">خریدار</span>
               )}
               {review.created_at &&
                 !Number.isNaN(new Date(review.created_at).getTime()) && (
@@ -156,28 +239,81 @@ export function Reviews({
                 <Icon name="check" size={15} /> خرید این کالا را پیشنهاد می‌کنم.
               </p>
             )}
-            <div className="store-review-points">
-              {!!review.pros?.length && (
-                <div>
-                  <strong>نکات مثبت</strong>
-                  <ul>
-                    {review.pros.map((point, index) => (
-                      <li key={index}>{point}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {!!review.cons?.length && (
-                <div>
-                  <strong>نکات منفی</strong>
-                  <ul>
-                    {review.cons.map((point, index) => (
-                      <li key={index}>{point}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            {(!!review.pros?.length || !!review.cons?.length) && (
+              <div className="store-review-points">
+                {!!review.pros?.length && (
+                  <div>
+                    <strong>نکات مثبت</strong>
+                    <ul>
+                      {review.pros.map((point, index) => (
+                        <li key={index}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {!!review.cons?.length && (
+                  <div>
+                    <strong>نکات منفی</strong>
+                    <ul>
+                      {review.cons.map((point, index) => (
+                        <li key={index}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+            {!demo && (
+              <div className="ds-review-votes" aria-label="ارزیابی دیدگاه">
+                {(["helpful", "unhelpful"] as const).map((direction) => {
+                  const state = feedback[review.id]
+                  const label =
+                    direction === "helpful" ? "مفید بود" : "مفید نبود"
+                  const contents = (
+                    <>
+                      {state ? number(state[direction]) : "ـ"}
+                      <svg
+                        width="19"
+                        height="19"
+                        viewBox="0 0 24 24"
+                        style={{
+                          transform:
+                            direction === "unhelpful"
+                              ? "rotate(180deg)"
+                              : undefined,
+                        }}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 10h4v11H3zm4 1 5-7c1-2 4-1 3 2l-1 4h5a2 2 0 0 1 2 2l-2 7a2 2 0 0 1-2 2H7" />
+                      </svg>
+                    </>
+                  )
+                  return customer ? (
+                    <button
+                      type="button"
+                      key={direction}
+                      aria-label={label}
+                      aria-pressed={state?.current_vote === direction}
+                      disabled={!!voting || !state}
+                      onClick={() => void vote(review.id, direction)}
+                    >
+                      {contents}
+                    </button>
+                  ) : (
+                    <Link
+                      key={direction}
+                      aria-label={`${label}؛ ورود به حساب کاربری`}
+                      href={loginHref}
+                    >
+                      {contents}
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </article>
         ))}
         {visibleReviews.length > limit && (
@@ -202,10 +338,7 @@ export function Reviews({
           ) : !customer ? (
             <div className="store-review-form">
               <p>برای ثبت دیدگاه وارد حساب کاربری خود شوید.</p>
-              <Link
-                href={`/account?${new URLSearchParams({ next: `/products/${encodeURIComponent(productHandle)}#reviews` })}`}
-                className="store-button"
-              >
+              <Link href={loginHref} className="store-button">
                 ورود به حساب کاربری
               </Link>
             </div>
@@ -235,6 +368,9 @@ export function Reviews({
                   await submitReview(productId, {
                     rating,
                     content,
+                    customer_name: form.has("anonymous")
+                      ? "کاربر دیجی‌استایل"
+                      : undefined,
                     title: text("title") || undefined,
                     pros: points("pros"),
                     cons: points("cons"),
@@ -279,6 +415,10 @@ export function Reviews({
               <label>
                 نکات منفی (با ویرگول جدا کنید)
                 <input name="cons" maxLength={300} />
+              </label>
+              <label>
+                <input type="checkbox" name="anonymous" /> ثبت دیدگاه به صورت
+                ناشناس
               </label>
               <label>
                 <input type="checkbox" name="recommended" defaultChecked /> این

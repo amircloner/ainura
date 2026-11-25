@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { AddressFields, readAddress } from "@/components/commerce/address"
-import { commerceError, useCommerce } from "@/lib/commerce"
+import { commerceError, contactEmail, useCommerce } from "@/lib/commerce"
 import { formatPrice, toPersian } from "@/lib/format"
 
 export default function CheckoutPage() {
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
                   name="email"
                   type="email"
                   dir="ltr"
-                  defaultValue={email || customer?.email || ""}
+                  defaultValue={email || contactEmail(customer?.email) || ""}
                   required
                 />
               </label>

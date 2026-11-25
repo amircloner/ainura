@@ -11,6 +11,8 @@ const paths = {
   heart:
     "M20.8 4.6a5.5 5.5 0 0 0-7.8 0l-1 1-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z",
   bag: "M4 7h16l1 14H3L4 7Zm4 3V6a4 4 0 0 1 8 0v4",
+  cart: "M22 3h-2l-1 13H4L3 6h17M6 20h1m9 0h1",
+  login: "M16 7V4H3v16h13v-3m7-5H8m4-4-4 4 4 4",
   user: "M20 21a8 8 0 0 0-16 0m12-13a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
   menu: "M3 6h18M3 12h18M3 18h18",
   close: "m6 6 12 12M18 6 6 18",
@@ -132,12 +134,14 @@ export function Media({
 
 export function Breadcrumbs({
   items,
+  homeLabel = "خانه",
 }: {
   items: { label: string; href?: string }[]
+  homeLabel?: string
 }) {
   return (
     <nav className="store-breadcrumbs" aria-label="مسیر صفحه">
-      <Link href="/">خانه</Link>
+      <Link href="/">{homeLabel}</Link>
       {items.map(({ label, href }, index) => (
         <span key={index}>
           <Icon name="left" size={12} />

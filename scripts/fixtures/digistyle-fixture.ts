@@ -1749,7 +1749,12 @@ export const DIGISTYLE_PRODUCTS: DigistyleCatalogProduct[] = [
       "country": ""
     },
     "images": [
-      "https://dkstatics-public.digikala.com/digikala-products/071621b29d7bcbcd4d1bfe24d2c1fc16b734348c_1794858984.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_80"
+      "https://dkstatics-public.digikala.com/digikala-products/071621b29d7bcbcd4d1bfe24d2c1fc16b734348c_1794858984.jpg?x-oss-process=image/resize,m_lfit,h_800,w_800/quality,q_80",
+      "https://dkstatics-public.digikala.com/digikala-products/533755c05a7de32e92b61448f2e4f9447d3d0c9e_1790667146.jpg?x-oss-process=image/resize,m_lfit,h_1000,w_1000/quality,q_80",
+      "https://dkstatics-public.digikala.com/digikala-products/373f1790d3a7a3e08cbdb21e47ebbaa3ed0d6052_1790667151.jpg?x-oss-process=image/resize,m_lfit,h_1000,w_1000/quality,q_80",
+      "https://dkstatics-public.digikala.com/digikala-products/0e53f01ae6ba733bd5bec852c0302bfb9c7336ac_1790667154.jpg?x-oss-process=image/resize,m_lfit,h_1000,w_1000/quality,q_80",
+      "https://dkstatics-public.digikala.com/digikala-products/f52fcc8c4478bc7d38b63fc77f64110ee12f60db_1790667157.jpg?x-oss-process=image/resize,m_lfit,h_1000,w_1000/quality,q_80",
+      "https://dkstatics-public.digikala.com/digikala-products/b927621a44e34b0b0bf71312286845bc0984a3dc_1790667160.jpg?x-oss-process=image/resize,m_lfit,h_1000,w_1000/quality,q_80"
     ],
     "variants": [
       {
@@ -1790,7 +1795,33 @@ export const DIGISTYLE_PRODUCTS: DigistyleCatalogProduct[] = [
       "seller_name": "چرم طبیعی منط",
       "warranty": "گارانتی 12 ماهه منط",
       "lead_time_days": 2,
-      "return_policy": "۷ روز ضمانت بازگشت کالا"
+      "return_policy": "۷ روز ضمانت بازگشت کالا",
+      "specifications": [
+        {
+          "label": "کشور تولید‌کننده",
+          "value": "ایران"
+        },
+        {
+          "label": "مورد استفاده",
+          "value": "روزمره - مجلسی و مهمانی"
+        },
+        {
+          "label": "نوع ست کیف و کفش زنانه",
+          "value": "ست کیف و صندل"
+        },
+        {
+          "label": "جنس کیف",
+          "value": "چرم طبیعی"
+        },
+        {
+          "label": "جنس رویه کفش",
+          "value": "چرم طبیعی"
+        },
+        {
+          "label": "نوع کفش",
+          "value": "صندل"
+        }
+      ]
     },
     "created_at": "2026-11-20T00:00:00.000Z",
     "featured": true,
