@@ -3,7 +3,11 @@
 import Link from "next/link"
 import { useState } from "react"
 import { AddressFields, readAddress } from "@/components/commerce/address"
-import { commerceError, contactEmail, useCommerce } from "@/lib/commerce"
+import {
+  commerceError,
+  customerContactEmail,
+  useCommerce,
+} from "@/lib/commerce"
 import { formatPrice, toPersian } from "@/lib/format"
 
 export default function CheckoutPage() {
@@ -31,7 +35,11 @@ export default function CheckoutPage() {
   const [confirmation, setConfirmation] = useState("")
   const [demoOrder, setDemoOrder] = useState(false)
   const [error, setError] = useState("")
-  const [addressId, setAddressId] = useState("")
+  const [selectedAddressId, setAddressId] = useState<string | null>(null)
+  const addressId =
+    selectedAddressId ??
+    customer?.addresses?.find((entry) => entry.is_default_shipping)?.id ??
+    ""
   const [address, setAddress] = useState<ReturnType<typeof readAddress>>()
   const [email, setEmail] = useState("")
 
@@ -112,7 +120,8 @@ export default function CheckoutPage() {
                   name="email"
                   type="email"
                   dir="ltr"
-                  defaultValue={email || contactEmail(customer?.email) || ""}
+                  key={customer?.id}
+                  defaultValue={email || customerContactEmail(customer) || ""}
                   required
                 />
               </label>

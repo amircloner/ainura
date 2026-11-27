@@ -16,7 +16,7 @@ export function Header({
   products: CatalogProduct[]
   brands: CatalogBrand[]
 }) {
-  const { cart, wishlist, openCart } = useCommerce()
+  const { cart, customer, wishlist, openCart } = useCommerce()
   const [search, setSearch] = useState(false)
   const [query, setQuery] = useState("")
   const [activeMenuId, setActiveMenuId] = useState<number | null>(null)
@@ -191,17 +191,17 @@ export function Header({
           <div className="ds-header-actions">
             <Link
               className="ds-auth-btn"
-              href="/account"
-              aria-label="ورود یا ثبت نام"
+              href="/profile"
+              aria-label={customer ? "حساب کاربری" : "ورود یا ثبت نام"}
               onClick={closeAll}
             >
-              <Icon name={isPdp ? "login" : "user"} size={20} />
-              <span>ورود | ثبت نام</span>
+              <Icon name={isPdp && !customer ? "login" : "user"} size={20} />
+              <span>{customer ? "حساب کاربری" : "ورود | ثبت نام"}</span>
             </Link>
 
             <Link
               className="ds-icon-btn"
-              href="/wishlist"
+              href={customer ? "/profile/favorites" : "/wishlist"}
               aria-label={`علاقه‌مندی‌ها، ${number(wishlist.length)} کالا`}
               onClick={closeAll}
             >

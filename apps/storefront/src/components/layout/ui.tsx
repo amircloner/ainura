@@ -27,6 +27,15 @@ const paths = {
   shield: "M12 22s7-4 7-10V5l-7-3-7 3v7c0 6 7 10 7 10Zm-3-10 2 2 4-4",
   truck: "M3 5h12v12H3V5Zm12 5h4l3 3v4h-7m-9 0a2 2 0 1 0 4 0m6 0a2 2 0 1 0 4 0",
   ruler: "M3 14 14 3l7 7-11 11-7-7Zm5-5 3 3m1-7 3 3m-11 5 3 3",
+  grid: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",
+  box: "M3 7 12 3l9 4v10l-9 4-9-4V7Zm0 0 9 4 9-4m-9 4v10M7.5 5l9 4",
+  pin: "M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Zm-4.5 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z",
+  message: "M20 4H4v13h4v4l5-4h7V4ZM8 9h8m-8 4h5",
+  gift: "M3 8h18v4H3zM5 12v9h14v-9m-7-4v13m0-13H8a2.5 2.5 0 1 1 2.3-3.4L12 8Zm0 0h4a2.5 2.5 0 1 0-2.3-3.4L12 8Z",
+  wallet: "M20 8V5H5a2 2 0 0 0-2 2v12h17v-4m-3-4h4v4h-4a2 2 0 0 1 0-4ZM5 8h15",
+  clock: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 7v5l3 2",
+  return: "M9 8 4 12l5 4m-5-4h11a5 5 0 0 0 0-10",
+  plus: "M12 5v14M5 12h14",
 } as const
 
 export function Icon({

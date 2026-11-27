@@ -17,6 +17,7 @@ import {
   type CatalogProduct,
   type CatalogVariant,
 } from "./medusa"
+import { isValidEmail } from "./profile"
 
 type CartLine = {
   id: string
@@ -45,11 +46,20 @@ export const commerceError = (error: unknown) =>
 export const contactEmail = (email?: string | null) =>
   email?.endsWith("@phone.invalid") ? undefined : email || undefined
 
+export function customerContactEmail(
+  customer?: HttpTypes.StoreCustomer | null
+) {
+  const email = customer?.metadata?.contact_email
+  if (typeof email === "string" && isValidEmail(email)) return email.trim()
+  return contactEmail(customer?.email)
+}
+
 function useCommerceState(
   catalog: CatalogProduct[],
   colorMap: Record<string, string> = {}
 ) {
   const [ready, setReady] = useState(false)
+  const [accountReady, setAccountReady] = useState(false)
   const [busy, setBusy] = useState(false)
   const locked = useRef(false)
   const [isCartOpen, setCartOpen] = useState(false)
@@ -80,7 +90,10 @@ function useCommerceState(
     setLocalCart(readLocal(demoCartKey, []))
     setLocalWishlist(readLocal(wishlistKey, []))
     setReady(true)
-    if (!connected) return
+    if (!connected) {
+      setAccountReady(true)
+      return
+    }
     const saved = readLocal<string | null>(cartKey, null)
     if (saved) {
       sdk.store.cart
@@ -109,6 +122,11 @@ function useCommerceState(
           return refreshWishlist()
         })
         .catch(() => {})
+        .finally(() => {
+          if (active) setAccountReady(true)
+        })
+    } else {
+      setAccountReady(true)
     }
     return () => {
       active = false
@@ -157,7 +175,7 @@ function useCommerceState(
     const region = await getRegion()
     const { cart } = await sdk.store.cart.create({
       region_id: region.id,
-      email: contactEmail(customer?.email),
+      email: customerContactEmail(customer),
     })
     rememberCart(cart)
     return cart
@@ -396,12 +414,40 @@ function useCommerceState(
 
   async function changeAddress(address: Address | string) {
     await run(async () => {
-      if (typeof address === "string")
+      if (typeof address === "string") {
         await sdk.store.customer.deleteAddress(address)
-      else await sdk.store.customer.createAddress(address)
-      setCustomer(
-        (await sdk.store.customer.retrieve({ fields: "+addresses" })).customer
-      )
+        setCustomer(
+          (current) =>
+            current && {
+              ...current,
+              addresses: current.addresses?.filter(({ id }) => id !== address),
+            }
+        )
+      } else {
+        const result = await sdk.store.customer.createAddress(address)
+        setCustomer(result.customer)
+      }
+    })
+  }
+
+  async function editAddress(
+    id: string,
+    address: HttpTypes.StoreUpdateCustomerAddress
+  ) {
+    await run(async () => {
+      const result = await sdk.store.customer.updateAddress(id, address)
+      setCustomer(result.customer)
+    })
+  }
+
+  async function setDefaultAddress(id: string) {
+    await editAddress(id, { is_default_shipping: true })
+  }
+
+  async function updateCustomer(input: HttpTypes.StoreUpdateCustomer) {
+    await run(async () => {
+      const result = await sdk.store.customer.update(input)
+      setCustomer(result.customer)
     })
   }
 
@@ -479,7 +525,9 @@ function useCommerceState(
   return {
     busy,
     ready,
+    accountReady,
     notice,
+    catalog,
     cart,
     wishlist,
     customer,
@@ -500,6 +548,9 @@ function useCommerceState(
     completeOtpLogin,
     logout,
     changeAddress,
+    editAddress,
+    setDefaultAddress,
+    updateCustomer,
     prepareCheckout,
     chooseShipping,
     completeCheckout,

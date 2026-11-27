@@ -1,11 +1,15 @@
 import type { HttpTypes } from "@medusajs/types"
 import { latinDigits } from "@/lib/format"
+import { normalizeIranMobile } from "@/lib/otp-input"
 
 export function AddressFields({
   address,
 }: {
   address?: Partial<HttpTypes.StoreCreateCustomerAddress>
 }) {
+  const savedPhone = address?.phone ?? ""
+  const localPhone = normalizeIranMobile(savedPhone)?.replace("+98", "0")
+
   return (
     <div className="commerce-fields">
       <label>
@@ -74,7 +78,7 @@ export function AddressFields({
           inputMode="tel"
           pattern="[0٠۰][9۹٩][0-9۰-۹٠-٩]{9}"
           dir="ltr"
-          defaultValue={address?.phone ?? ""}
+          defaultValue={localPhone ?? savedPhone}
           required
         />
       </label>

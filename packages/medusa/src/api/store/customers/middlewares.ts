@@ -7,6 +7,7 @@ import {
   StoreGetCustomerAddressesParams,
   StoreGetCustomerAddressParams,
   StoreGetCustomerParams,
+  StoreGetCustomerReviewsParams,
   StoreGetWishlistParams,
   StoreUpdateCustomer,
   StoreUpdateCustomerAddress,
@@ -109,6 +110,16 @@ export const storeCustomerRoutesMiddlewares: MiddlewareRoute[] = [
       validateAndTransformQuery(
         StoreGetCustomerAddressParams,
         QueryConfig.retrieveTransformQueryConfig
+      ),
+    ],
+  },
+  {
+    method: ["GET"],
+    matcher: "/store/customers/me/reviews",
+    middlewares: [
+      validateAndTransformQuery(
+        StoreGetCustomerReviewsParams,
+        QueryConfig.listCustomerReviewsTransformQueryConfig
       ),
     ],
   },

@@ -66,6 +66,22 @@ export const listAddressesTransformQueryConfig = {
   isList: true,
 }
 
+const customerReviewFields = [
+  "id",
+  "product_id",
+  "title",
+  "content",
+  "rating",
+  "status",
+  "created_at",
+]
+
+export const listCustomerReviewsTransformQueryConfig = {
+  defaults: customerReviewFields,
+  allowed: buildAllowedFields(customerReviewFields),
+  isList: true,
+}
+
 export const defaultStoreWishlistItemFields = [
   "id",
   "customer_id",

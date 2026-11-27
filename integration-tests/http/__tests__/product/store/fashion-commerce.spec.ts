@@ -184,6 +184,22 @@ medusaIntegrationTestRunner({
       })
 
       const { id } = created.data.review
+      const historyUrl = "/store/customers/me/reviews"
+      await expect(api.get(historyUrl, storeHeaders)).rejects.toMatchObject({
+        response: { status: 401 },
+      })
+      const history = await api.get(
+        `${historyUrl}?fields=id,status,customer_id,metadata`,
+        customerHeaders
+      )
+      expect(history.data).toMatchObject({
+        reviews: [{ id, status: "pending" }],
+        count: 1,
+      })
+      expect(history.data.reviews[0]).toEqual({ id, status: "pending" })
+      const otherHistory = await api.get(historyUrl, otherCustomerHeaders)
+      expect(otherHistory.data).toMatchObject({ reviews: [], count: 0 })
+
       const adminReview = await api.get(
         `/admin/reviews?status=pending&product_id=${productId}`,
         adminHeaders

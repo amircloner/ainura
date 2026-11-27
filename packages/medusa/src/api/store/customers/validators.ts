@@ -66,6 +66,11 @@ export const StoreGetWishlistParams = createFindParams({
   limit: 50,
 })
 
+export const StoreGetCustomerReviewsParams = createFindParams({
+  offset: 0,
+  limit: 20,
+})
+
 export const StoreCreateWishlistItem = z.object({
   product_id: z.string().min(1),
   variant_id: z.string().min(1).nullish(),

@@ -98,19 +98,6 @@ export function OtpLogin() {
   return (
     <main className={styles.page}>
       <section className={styles.card} aria-labelledby="login-title">
-        <div className={styles.heading}>
-          <img
-            src="/digistyle/logo.svg"
-            width="126"
-            height="22"
-            alt="دیجی‌استایل"
-          />
-          <span>حساب کاربری</span>
-        </div>
-        <div className={styles.progress} aria-hidden="true">
-          <i />
-          <i data-active={!!sentTo} />
-        </div>
         <h1 id="login-title">
           {sentTo ? "کد تأیید را وارد کنید" : "ورود یا ثبت‌نام"}
         </h1>
@@ -176,7 +163,7 @@ export function OtpLogin() {
             </p>
           )}
           <button
-            className={styles.submit}
+            className={`store-button ${styles.submit}`}
             disabled={pending || (!sentTo && waiting)}
           >
             {pending

@@ -1,49 +1,29 @@
 .page {
   display: grid;
   place-items: center;
-  padding: clamp(32px, 7vw, 96px) 16px;
-  background: #f7f6f5;
+  min-height: 60vh;
+  padding: clamp(28px, 6vw, 80px) 16px;
   flex: 1;
 }
 .card {
   width: min(100%, 440px);
-  padding: clamp(24px, 4vw, 44px);
-  background: white;
-  border: 1px solid #ddd9d7;
-  color: #171516;
+  padding: clamp(22px, 4vw, 36px);
+  background: var(--store-bg);
+  border: 1px solid var(--store-line);
+  color: var(--store-ink);
 }
-.heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.heading span,
 .note,
 .countdown {
   font-size: 12px;
-  color: #646066;
-}
-.progress {
-  display: flex;
-  gap: 4px;
-  margin: 28px 0;
-}
-.progress i {
-  width: 32px;
-  height: 3px;
-  background: #77172d;
-}
-.progress i[data-active="false"] {
-  background: #e7e4e3;
+  color: var(--ds-grey-700);
 }
 .card h1 {
-  font-size: clamp(24px, 4vw, 30px);
+  font-size: clamp(1.25rem, 3.8vw, 1.5rem);
   font-weight: 800;
 }
 .hint {
   margin-top: 8px;
-  color: #5d585a;
+  color: var(--ds-grey-700);
   font-size: 14px;
   line-height: 2;
 }
@@ -60,41 +40,33 @@
   width: 100%;
   min-width: 0;
   height: 50px;
-  border: 1px solid #aaa6a5;
+  border: 1px solid var(--ds-neutral-200);
+  background: var(--store-bg);
   padding-inline: 14px;
   font-size: 17px;
   letter-spacing: 0.1em;
 }
 .card input[aria-invalid="true"] {
-  border-color: #971839;
+  border-color: var(--store-accent);
 }
 .submit {
   margin-top: 6px;
   min-height: 48px;
-  background: #181617;
-  color: white;
-  font-weight: 700;
-}
-.submit:hover:not(:disabled) {
-  background: #65152a;
-}
-.submit:disabled {
-  opacity: 0.58;
 }
 .link {
   justify-self: start;
   min-height: 36px;
-  color: #77172d;
+  color: var(--store-ink);
   font-size: 13px;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 .error {
-  color: #971839;
+  color: var(--store-accent);
   font-size: 13px;
 }
 .note {
-  border-top: 1px solid #eeeae9;
-  margin-top: 25px;
-  padding-top: 16px;
+  border-block-start: 1px solid var(--store-line);
+  margin-block-start: 24px;
+  padding-block-start: 14px;
 }
